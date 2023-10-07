@@ -1,1 +1,1 @@
-const devURL = "https://api.sxsw.com.ng";
+export const apiURL = "http://192.168.1.5:2000";
