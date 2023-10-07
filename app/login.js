@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f1f1f1",
   },
   register: {
-    color: "#1873cc",
+    color: "#73150F",
     fontWeight: "bold",
   },
 });
