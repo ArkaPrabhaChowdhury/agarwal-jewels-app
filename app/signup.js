@@ -29,11 +29,7 @@ const RegisterPage = () => {
       this.toast.show("Please enter your country of residence", 2000);
       return;
     }
-    navigation.navigate("register2", {
-      firstName: firstName,
-      lastName: lastName,
-      country: country,
-    });
+    //Enter backend code
     console.log("First Name: ", firstName);
   };
 
@@ -115,7 +111,7 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#1873cc",
+    backgroundColor: "#73150F",
     borderRadius: 5,
   },
   buttonText: {
@@ -126,7 +122,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   login: {
-    color: "#1873cc",
+    color: "#73150F",
     fontSize: 16,
   },
   smallText: {

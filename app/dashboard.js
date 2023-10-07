@@ -14,6 +14,8 @@ import { StatusBar } from "expo-status-bar";
 import * as Linking from "expo-linking";
 import WalletScreen from "./tabs/wallet";
 import NotifcationsScreen from "./tabs/notifications";
+import { Image } from "expo-image";
+import { View } from "react-native-ui-lib";
 
 const Tab = createBottomTabNavigator();
 const DashboardPage = () => {
@@ -43,17 +45,31 @@ const DashboardPage = () => {
     }, [])
   );
   const navigation = useNavigation();
-  const handleSupport = () => {
-    Linking.openURL("https://scopex.money/Contact");
-  };
+
+  const openWhatsapp = () => {
+    Linking.openURL(
+      "https://wa.me/917981047462?text=Hi%2C%20I%20have%20a%20query%20regarding%20the%20app."
+    );
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light" />
+      <View style={styles.navbar}>
+        <Image source={require("./assets/logo.svg")} style={styles.logo}/>
 
+        <TouchableOpacity onPress={openWhatsapp}>
+          <Image
+            style={styles.supportIcon}
+            source={require("./assets/support.svg")}
+          />
+        </TouchableOpacity>
+      </View>
       <Tab.Navigator
         screenOptions={{
           tabBarStyle: { height: windowHeight * 0.08, paddingBottom: 6 },
           gestureEnabled: false,
+          tabBarHideOnKeyboard: true,
         }}
       >
         <Tab.Screen
@@ -67,6 +83,8 @@ const DashboardPage = () => {
                 <Ionicons name="home-outline" size={26} color={theme} />
               ),
             headerShown: false,
+            tabBarActiveTintColor: theme,
+            tabBarInactiveTintColor: theme,
           }}
         />
         <Tab.Screen
@@ -80,6 +98,8 @@ const DashboardPage = () => {
                 <Ionicons name="ios-wallet-outline" size={26} color={theme} />
               ),
             headerShown: false,
+            tabBarActiveTintColor: theme,
+            tabBarInactiveTintColor: theme,
           }}
         />
         <Tab.Screen
@@ -93,6 +113,8 @@ const DashboardPage = () => {
                 <FontAwesome name="bell-o" size={24} color={theme} />
               ),
             headerShown: false,
+            tabBarActiveTintColor: theme,
+            tabBarInactiveTintColor: theme,
           }}
         />
         <Tab.Screen
@@ -106,6 +128,8 @@ const DashboardPage = () => {
                 <FontAwesome name="user-circle" size={24} color={theme} />
               ),
             headerShown: false,
+            tabBarActiveTintColor: theme,
+            tabBarInactiveTintColor: theme,
           }}
         />
       </Tab.Navigator>
@@ -122,10 +146,10 @@ const styles = StyleSheet.create({
     height: 120,
   },
   navbar: {
-    height: 80,
+    height: 90,
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "#1873cc",
+    backgroundColor: "#73150F",
     paddingTop: 40,
     paddingBottom: 15,
     paddingHorizontal: 20,
@@ -144,6 +168,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
+  },
+  logo:{
+    width: 50,
+    height: 50,
+  },
+  supportIcon:{
+    width: 35,
+    height: 35,
   },
   title: {
     fontSize: 24,
