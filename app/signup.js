@@ -36,7 +36,7 @@ const RegisterPage = () => {
     } 
     else{
       
-     axios.post(`http://localhost:2000/users`, {
+     axios.post(`${apiURL}/users`, {
         email : email,
         password : password,
         phonenumber : phone,
