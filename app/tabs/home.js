@@ -3,12 +3,25 @@ import Text from "react-native-ui-lib/text";
 import { commonStyles, theme } from "../styles";
 import { ScrollView, TextInput } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { apiURL } from "../../utils";
+import axios from "axios";
 
 const HomeScreen = () => {
-  const [rate, setRate] = useState(5665);
+  const [rate, setRate] = useState("0000");
   const [grams, setGrams] = useState("");
   const [amount, setAmount] = useState("");
+
+  useEffect(() => {
+    axios.get(`${apiURL}/rate`)
+      .then((res) => {
+        console.log(res.data[0].goldrate)
+        setRate(res.data[0].goldrate)
+      })
+      .catch((err) => {
+        console.log(err)
+      });
+  }, []);
 
   const handleGrams = (text) => {
     setGrams(text);
@@ -21,6 +34,8 @@ const HomeScreen = () => {
     const convertedAmount = text ? parseFloat(text) / rate : 0; // Set to 0 if empty
     setGrams(convertedAmount.toFixed(2));
   };
+
+
 
   return (
     <ScrollView>
