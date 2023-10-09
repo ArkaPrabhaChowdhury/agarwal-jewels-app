@@ -9,29 +9,52 @@ import {
   ScrollView,
   KeyboardAvoidingView
 } from "react-native";
+
 import { Link, useNavigation } from "expo-router";
 import { commonStyles } from "./styles";
-import Toast from "react-native-easy-toast";
+import Toast from "react-native-easy-toast";  
+import axios from "axios";
+import { apiURL } from "../utils";
+
 
 const RegisterPage = () => {
   const navigation = useNavigation();
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [country, setCountry] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  
   const handleContinue = () => {
-    if (firstName === "") {
-      this.toast.show("Please enter your first name", 2000);
+    if (email === "") {
+      this.toast.show("Please enter your email", 2000);
       return;
-    } else if (lastName === "") {
+    } else if (password === "") {
       this.toast.show("Please enter your last name", 2000);
       return;
-    } else if (country === "") {
-      this.toast.show("Please enter your country of residence", 2000);
+    } else if (phone === "") {
+      this.toast.show("Please enter your phone number", 2000);
       return;
+    } 
+    else{
+      
+     axios.post(`http://localhost:2000/users`, {
+        email : email,
+        password : password,
+        phonenumber : phone,
+      })
+      .then((response) => {
+        console.log(response.data);
+        this.toast.show("Account created successfully", 2000);
+      })
+      .catch((error) => {
+        if(error.response.status === 401){
+          console.log(error.response.data);
+          this.toast.show(error.response.data.message, 2000);
+      }
+        else console.log(error);
+      });
+
     }
-    //Enter backend code
-    console.log("First Name: ", firstName);
-  };
+  }
 
   const handleRedirect = () => {
     navigation.navigate("login");
@@ -49,22 +72,22 @@ const RegisterPage = () => {
             style={styles.input}
             placeholder="Email"
             placeholderTextColor={"black"}
-            onChangeText={(text) => setFirstName(text)}
-            value={firstName}
+            onChangeText={(text) => setEmail(text)}
+            value={email}
           />
           <TextInput
             style={styles.input}
             placeholder="Password"
             placeholderTextColor={"black"}
-            onChangeText={(text) => setLastName(text)}
-            value={lastName}
+            onChangeText={(text) => setPassword(text)}
+            value={password}
           />
           <TextInput
             style={styles.input}
             placeholder="Phone number"
             placeholderTextColor={"black"}
-            onChangeText={(text) => setCountry(text)}
-            value={country}
+            onChangeText={(text) => setPhone(text)}
+            value={phone}
           />
           <TouchableOpacity style={styles.button} onPress={handleContinue}>
             <Text style={styles.buttonText}>Next</Text>
