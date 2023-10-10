@@ -6,6 +6,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
 import { apiURL } from "../../utils";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HomeScreen = () => {
   const [rate, setRate] = useState("0000");
@@ -35,7 +36,10 @@ const HomeScreen = () => {
     setGrams(convertedAmount.toFixed(2));
   };
 
-
+  const getId = async() => {
+    const id = await AsyncStorage.getItem("userId");
+    console.log(id);
+  }
 
   return (
     <ScrollView>

@@ -75,6 +75,7 @@ const LoginPage = () => {
       if (response.data.success) {
         // If the response indicates success, navigate to the dashboard
         this.toast.show("Login successful", 2000);
+        await AsyncStorage.setItem("userId", response.data.id);
         navigation.navigate('dashboard');
         return true; // Return true for success
       } else {
