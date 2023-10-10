@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Card } from "react-native-ui-lib";
 import axios from "axios";
 import { apiURL } from "../../utils";
+import { ScrollView } from "react-native";
+
 
 const NotificationsScreen = () => {
   const [data, setData] = useState(null);
@@ -9,8 +11,8 @@ const NotificationsScreen = () => {
   useEffect(() => {
     axios.get(`${apiURL}/notifications`)
       .then((response) => {
-        console.log(response.data[0].content);
-        setData(response.data[0].content);
+        console.log(response.data);
+        setData(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -19,19 +21,21 @@ const NotificationsScreen = () => {
 
   return (
     <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 20,
-      }}
-    >
-      {data ? (
+    style={{
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 20,
+    }}
+  >
+    <ScrollView>
+      {data ? data.map((item, index) => (
         <Card
+          key={index}
           style={{
             backgroundColor: "white",
             borderRadius: 10,
-            padding: 20,
+            padding: 90,
             shadowColor: "#000",
             shadowOffset: {
               width: 0,
@@ -40,14 +44,14 @@ const NotificationsScreen = () => {
             shadowOpacity: 0.25,
             shadowRadius: 3.84,
             elevation: 5,
+            marginBottom: 20,
           }}
         >
-          <Text>{data}</Text>
+          <Text>{item.content}</Text>
         </Card>
-      ) : (
-        <Text>Loading...</Text>
-      )}
-    </View>
+      ))  : <Text>Loading...</Text>}
+    </ScrollView>
+  </View>
   );
 };
 
