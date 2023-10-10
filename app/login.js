@@ -14,7 +14,7 @@ import { Link, SplashScreen, useNavigation } from "expo-router";
 import { commonStyles } from "./styles";
 import { ScrollView } from "react-native";
 import axios from "axios";
-import { devURL } from "../utils";
+import { apiURL } from "../utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -40,7 +40,6 @@ const LoginPage = () => {
     }
   };
 
-
   const handleLogin = () => {
     onSubmit({ username, password });
   };
@@ -58,7 +57,34 @@ const LoginPage = () => {
       this.toast.show("Please enter your password", 2000);
       return;
     } else {
-      navigation.navigate("dashboard");
+      checkCredentials(val.username, val.password)
+      .catch((error) => {
+        console.error("Error checking credentials:", error);
+      });
+    }
+  };
+
+  const checkCredentials = async (username, password) => {
+    try {
+      // Make the POST request using Axios
+      const response = await axios.post(`${apiURL}/users/check-login`, {
+        email: username,
+        password: password,
+      });
+
+      if (response.data.success) {
+        // If the response indicates success, navigate to the dashboard
+        this.toast.show("Login successful", 2000);
+        navigation.navigate('dashboard');
+        return true; // Return true for success
+      } else {
+        this.toast.show("Invalid Email or Password", 2000);
+        console.log('Invalid Email or Password');
+        return false; // Return false for failure
+      }
+    } catch (error) {
+      console.error("Error checking credentials:", error);
+      throw error; // Rethrow the error for catch block handling
     }
   };
 
@@ -104,7 +130,10 @@ const LoginPage = () => {
         </TouchableOpacity>
         <Text style={commonStyles.smallText}>
           Don't have an account?{" "}
-          <Text onPress={()=>navigation.navigate("signup")} style={styles.register}>
+          <Text
+            onPress={() => navigation.navigate("signup")}
+            style={styles.register}
+          >
             Sign Up
           </Text>
         </Text>
