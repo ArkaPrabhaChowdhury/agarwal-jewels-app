@@ -79,7 +79,6 @@ const LoginPage = () => {
         return true; // Return true for success
       } else {
         this.toast.show("Invalid Email or Password", 2000);
-        console.log('Invalid Email or Password');
         return false; // Return false for failure
       }
     } catch (error) {
