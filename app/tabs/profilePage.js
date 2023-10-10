@@ -1,17 +1,41 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, Image, Alert } from "react-native";
 import { Avatar, Button, Card, Text, View } from "react-native-ui-lib";
 import { launchImageLibrary } from 'react-native-image-picker'; // Import image picker
 import { theme } from "../styles";
 import * as ImagePicker from 'expo-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from "axios";
+import { useFocusEffect } from "expo-router";
+import Toast from "react-native-easy-toast";  
+
 
 const ProfilePage = () => {
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getId();
+      return () => {};
+    }, [])
+  );
+
+  
+  const [clientId, setClientId] = useState("");
   const [user, setUser] = useState({
     name: "John Doe",
     email: "john.doe@example.com",
     phone: "+917981047462",
   });
 
+  const getId = async() => {
+    try{
+      const id = await AsyncStorage.getItem("userId");
+      setClientId(id);
+    }
+    catch(err){
+      console.log(err);
+    }
+  }
  
     const [image, setImage] = useState(null);
     const pickImage = async () => {
@@ -30,13 +54,33 @@ const ProfilePage = () => {
       }
     };
   
-  const uploadImage = () => {
-    // Implement image upload logic here
-    // You can send the image data to your backend for processing and storage
-    // For now, we'll just log the image URI
-    console.log('Image URI:', image);
-    Alert.alert('Image uploaded successfully!');
-  };
+
+    const uploadImage = async () => {
+      try {
+        if (!image) {
+          console.log('No image selected.');
+          return;
+        }
+        // Prepare the data to send in the request
+        const imageData = {
+          kyc_image: image,  // Assuming image contains the base64 image data or image URI
+          // Other KYC data if needed
+        };
+        // Replace 'YOUR_BACKEND_API_URL' with the actual URL where your backend is hosted
+        const apiUrl = `http://localhost:2000/users/${clientId}`; // Replace with the user's ID
+        const response = await axios.patch(apiUrl, imageData);
+    
+        console.log('Image uploaded successfully:', response.data);
+        this.toast.show("Image uploaded successfully!")
+        
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        this.toast.show('Error uploading image. Please try again.');
+        
+      }
+    };
+    
+  
 
   return (
     <ScrollView flex-1 center>
@@ -72,6 +116,7 @@ const ProfilePage = () => {
         )}
         
       </View>
+      <Toast ref={(toast) => (this.toast = toast)} />
     </ScrollView>
   );
 };
