@@ -2,31 +2,62 @@ import React, { useEffect, useState } from "react";
 import { ScrollView, Image, Alert } from "react-native";
 import { Avatar, Button, Card, Text, View } from "react-native-ui-lib";
 import { launchImageLibrary } from 'react-native-image-picker'; // Import image picker
-import { theme } from "../styles";
+import { commonStyles, theme } from "../styles";
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
 import { useFocusEffect } from "expo-router";
 import Toast from "react-native-easy-toast";  
+import { TextInput } from "react-native-gesture-handler";
+
+
 
 
 const ProfilePage = () => {
+//Setting Up The Kyc Number, plis dont scold for naming ps. code at line 126 
+  const [kyc_num , setKyc_num] = useState("");
+  const handleKycNum = (text) =>{
+    setKyc_num(text);
+    console.log(text);
+  }
 
+
+
+  // KYC Number Upload
+const handleKycNumUpload = async () => {
+  const url = `http://localhost:2000/users/${clientId}`;
+  const data = {
+    kyc_number: kyc_num,
+  };
+  console.log(data);
+  try {
+    const response = await axios.patch(url, data);
+    console.log('Success:', response.data);
+    // Handle success response from server
+  } catch (error) {
+    console.error('Error:', error);
+    // Handle error response from server
+  }
+};
+
+
+//Async Storage for clientID
   useFocusEffect(
     React.useCallback(() => {
+      getUser();
       getId();
       return () => {};
     }, [])
   );
 
-  
+
+
+  //Profile Data for client
   const [clientId, setClientId] = useState("");
   const [user, setUser] = useState({
-    name: "John Doe",
     email: "john.doe@example.com",
     phone: "+917981047462",
   });
-
   const getId = async() => {
     try{
       const id = await AsyncStorage.getItem("userId");
@@ -36,7 +67,20 @@ const ProfilePage = () => {
       console.log(err);
     }
   }
- 
+
+  //Getting User Details
+const getUser = async () => {
+  try {
+    const id = await AsyncStorage.getItem('userId');
+    const response = await axios.get(`http://localhost:2000/users/${id}`);
+    console.log(response.data);
+    setUser(prevUser => ({...prevUser, email: response.data.email, phone: response.data.phonenumber}));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+  //FrontEnd Image Uploading for client
     const [image, setImage] = useState(null);
     const pickImage = async () => {
       // No permissions request is necessary for launching the image library
@@ -46,15 +90,14 @@ const ProfilePage = () => {
         aspect: [4, 3],
         quality: 1,
       });
-  
       console.log(result);
-  
       if (!result.canceled) {
         setImage(result.assets[0].uri);
       }
     };
   
 
+    // Upload image to server
     const uploadImage = async () => {
       try {
         if (!image) {
@@ -115,6 +158,17 @@ const ProfilePage = () => {
           
         )}
         
+        <View marginT-10>
+      <TextInput
+        style={[commonStyles.input, { flex: 1 , margin: 10, width: 300, height: 40, borderColor: 'gray', borderWidth: 1}]}
+        marginL-20
+        placeholder="Enter your Pan/Aadhar number"
+        value={kyc_num}
+        onChangeText={handleKycNum}
+      />
+      <Button marginT-10 backgroundColor={theme} color="white" onPress={handleKycNumUpload} label="Submit" />
+    </View>
+
       </View>
       <Toast ref={(toast) => (this.toast = toast)} />
     </ScrollView>
