@@ -36,9 +36,23 @@ const HomeScreen = () => {
     setGrams(convertedAmount.toFixed(2));
   };
 
-  const getId = async() => {
-    const id = await AsyncStorage.getItem("userId");
-    console.log(id);
+  const handlePurchase = async () => {
+    try {
+      const id = await AsyncStorage.getItem("userId"); // Replace with the actual user ID
+      const response = await axios.patch(`${apiURL}/users/wallet/${id}`, {
+        purchased: amount,
+      });
+
+      if (response.status === 200) {
+        console.log('Wallet updated successfully');
+        // Handle success, e.g., update the UI
+      } else {
+        console.error('Error updating wallet:', response.data.message);
+      }
+
+    } catch (error) {
+      console.error('Error updating wallet:', error);
+    }
   }
 
   return (
@@ -121,7 +135,7 @@ const HomeScreen = () => {
             spellCheck={false}
           />
         </View>
-        <Button label="Purchase" backgroundColor={theme} marginT-24 />
+        <Button label="Purchase" backgroundColor={theme} onPress={handlePurchase} marginT-24 />
         </Card>
       </View>
     </ScrollView>
