@@ -4,13 +4,30 @@ import { theme } from '../styles';
 import { ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect } from 'react';
+import axios from 'axios';
+import { apiURL } from '../../utils';
+import { useFocusEffect } from 'expo-router';
 const WalletScreen = () => {
-  const [balance, setBalance] = useState(1000);
+  const [balance, setBalance] = useState(0);
 
-  const getId = async() => {
-    const id = await AsyncStorage.getItem("userId");
-    return id;
-  }
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchWallet();
+    }, [])
+  );
+
+  const fetchWallet = async () => {
+      const id = await AsyncStorage.getItem("userId");
+      axios.get(`${apiURL}/users/${id}`)
+      .then((res) => {
+        if(res.data.wallet){
+          setBalance(res.data.wallet);
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      });
+  };
 
   return (
     <ScrollView flex-1 center>
