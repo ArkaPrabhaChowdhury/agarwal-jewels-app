@@ -52,7 +52,7 @@ const HomeScreen = () => {
   const handleTransfer = async () => {
     const id= await AsyncStorage.getItem("userId");
     axios
-      .post(`${apiURL}/users/transfer`, {
+      .post(`${apiURL}/transfers/create`, {
         clientId: id,
         grams: grams,
         amount: amount,
