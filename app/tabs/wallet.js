@@ -6,9 +6,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { apiURL } from '../../utils';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useNavigation } from 'expo-router';
 const WalletScreen = () => {
   const [balance, setBalance] = useState(0);
+  const navigation=useNavigation();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -46,7 +47,7 @@ const WalletScreen = () => {
           label="View Transaction History"
           backgroundColor={theme}
           onPress={() => {
-            // Navigate to the transaction history page
+           navigation.navigate("History");
           }}
         />
       </View>
