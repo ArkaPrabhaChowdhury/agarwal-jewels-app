@@ -16,6 +16,7 @@ import WalletScreen from "./tabs/wallet";
 import NotifcationsScreen from "./tabs/notifications";
 import { Image } from "expo-image";
 import { View } from "react-native-ui-lib";
+import HistoryScreen from "./tabs/history";
 
 const Tab = createBottomTabNavigator();
 const DashboardPage = () => {
@@ -96,6 +97,21 @@ const DashboardPage = () => {
                 <Ionicons name="ios-wallet-sharp" size={26} color={theme} />
               ) : (
                 <Ionicons name="ios-wallet-outline" size={26} color={theme} />
+              ),
+            headerShown: false,
+            tabBarActiveTintColor: theme,
+            tabBarInactiveTintColor: theme,
+          }}
+        />
+        <Tab.Screen
+          name="History"
+          component={HistoryScreen}
+          options={{
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <Ionicons name="time-sharp" size={26} color={theme} />
+              ) : (
+                <Ionicons name="time-outline" size={26} color={theme} />
               ),
             headerShown: false,
             tabBarActiveTintColor: theme,
