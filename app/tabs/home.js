@@ -16,7 +16,6 @@ const HomeScreen = () => {
 
   useEffect(() => {
     getRate();
-
   }, []);
 
   const getRate = async () => {
@@ -49,20 +48,25 @@ const HomeScreen = () => {
     console.log(id);
   };
 
-  const handleTransfer = async () => {
-    const id= await AsyncStorage.getItem("userId");
-    axios
-      .post(`${apiURL}/transfers/create`, {
+  const handlePurchase = async () => {
+    try {
+      const id = await AsyncStorage.getItem("userId"); // Replace with the actual user ID
+      const response = axios.patch(`${apiURL}/transfers/wallet/${id}`, {
+        purchased: amount,
+      });
+      const res = axios.post(`${apiURL}/transfers/create`, {
         clientId: id,
         grams: grams,
         amount: amount,
-      })
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
       });
+
+      if (response.status === 200) {
+        console.log("Wallet updated successfully");
+        console.log(res.data);
+      }
+    } catch (error) {
+      console.error("Error: ", error);
+    }
   };
 
   return (
@@ -149,7 +153,7 @@ const HomeScreen = () => {
             label="Purchase"
             backgroundColor={theme}
             marginT-24
-            onPress={handleTransfer}
+            onPress={handlePurchase}
           />
         </Card>
       </View>
