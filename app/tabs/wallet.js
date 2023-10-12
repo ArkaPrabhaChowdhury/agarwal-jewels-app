@@ -21,7 +21,8 @@ const WalletScreen = () => {
       axios.get(`${apiURL}/users/${id}`)
       .then((res) => {
         if(res.data.wallet){
-          setBalance(res.data.wallet);
+          const newBal = parseFloat(res.data.wallet);
+        setBalance(newBal.toFixed(2));
         }
       })
       .catch((err) => {
