@@ -48,22 +48,6 @@ const HomeScreen = () => {
     console.log(id);
   };
 
-  const handleTransfer = async () => {
-    const id = await AsyncStorage.getItem("userId");
-    axios
-      .post(`${apiURL}/transfers/create`, {
-        clientId: id,
-        grams: grams,
-        amount: amount,
-      })
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
   const handlePurchase = async () => {
     try {
       const id = await AsyncStorage.getItem("userId"); // Replace with the actual user ID
