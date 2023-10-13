@@ -9,6 +9,7 @@ import axios from "axios";
 import { useFocusEffect } from "expo-router";
 import Toast from "react-native-easy-toast";  
 import { TextInput } from "react-native-gesture-handler";
+import { apiURL } from "../../utils";
 
 
 
@@ -25,7 +26,7 @@ const ProfilePage = () => {
 
   // KYC Number Upload
 const handleKycNumUpload = async () => {
-  const url = `http://localhost:2000/users/${clientId}`;
+  const url = `${apiURL}/users/${clientId}`;
   const data = {
     kyc_number: kyc_num,
   };
@@ -72,7 +73,7 @@ const handleKycNumUpload = async () => {
 const getUser = async () => {
   try {
     const id = await AsyncStorage.getItem('userId');
-    const response = await axios.get(`http://localhost:2000/users/${id}`);
+    const response = await axios.get(`${apiURL}/users/${id}`);
     console.log(response.data);
     setUser(prevUser => ({...prevUser, email: response.data.email, phone: response.data.phonenumber}));
   } catch (error) {
@@ -110,7 +111,7 @@ const getUser = async () => {
           // Other KYC data if needed
         };
         // Replace 'YOUR_BACKEND_API_URL' with the actual URL where your backend is hosted
-        const apiUrl = `http://localhost:2000/users/${clientId}`; // Replace with the user's ID
+        const apiUrl = `${apiURL}/users/${clientId}`; // Replace with the user's ID
         const response = await axios.patch(apiUrl, imageData);
     
         console.log('Image uploaded successfully:', response.data);
