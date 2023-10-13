@@ -21,6 +21,7 @@ const WalletScreen = () => {
       const id = await AsyncStorage.getItem("userId");
       axios.get(`${apiURL}/users/${id}`)
       .then((res) => {
+        console.log(res.data);
         if(res.data.wallet){
           const newBal = parseFloat(res.data.wallet);
         setBalance(newBal.toFixed(2));
