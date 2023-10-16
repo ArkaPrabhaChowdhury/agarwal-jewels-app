@@ -1,23 +1,17 @@
-import React, { useEffect } from "react";
-import { FlatList, ScrollView, StyleSheet } from "react-native";
-import { Card, Text, View } from "react-native-ui-lib";
-import { commonStyles, theme } from "../styles";
-import { useFocusEffect } from "expo-router";
-import { apiURL } from "../../utils";
+import React, { useState } from "react";
+import { ScrollView, StyleSheet } from "react-native";
+import { Button, Text, View } from "react-native-ui-lib";
+import { useFocusEffect, useNavigation } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-
-const transactions = [
-  { id: 1, date: "2021-09-01", amount: 100 },
-  { id: 2, date: "2021-09-02", amount: 200 },
-  { id: 3, date: "2021-09-03", amount: 300 },
-  { id: 4, date: "2021-09-04", amount: 400 },
-  { id: 5, date: "2021-09-05", amount: 500 },
-];
+import { apiURL } from "../../utils";
+import { theme } from "../styles";
+import Loading from "./loading";
 
 const HistoryScreen = () => {
-  const [transfers, setTransfers] = React.useState([]);
-
+  const [transfers, setTransfers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigation = useNavigation();
   useFocusEffect(
     React.useCallback(() => {
       getTransfers();
@@ -26,31 +20,58 @@ const HistoryScreen = () => {
 
   const getTransfers = async () => {
     console.log("getting transfers");
-    const id = await AsyncStorage.getItem("userId");
-    console.log(id);
-    axios
-      .post(`${apiURL}/transfers/get`, {
+    try {
+      const id = await AsyncStorage.getItem("userId");
+      console.log(id);
+      const res = await axios.post(`${apiURL}/transfers/get`, {
         clientId: id,
-      })
-      .then((res) => {
-        if (res.data) {
-          setTransfers(res.data.transfers);
-          console.log(res.data.transfers);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
       });
+
+      if (res.data) {
+        setTransfers(res.data.transfers);
+        console.log(res.data.transfers);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false); // Set loading to false after the fetch attempt
+    }
   };
 
-  return (
-    <View center>
-      <View paddingV-40>
-        <Text text40R color={theme}>
-          Your purchase history
+  if (loading) {
+    return (
+      <View center marginT-24>
+        <Text>
+          <Loading />
         </Text>
       </View>
-      {transfers.length > 0 ? (
+    );
+  }
+
+  if (transfers.length === 0) {
+    return (
+      <View center marginT-24>
+        <Text text50BL>You have no transfers</Text>
+        <Button
+          label="Buy Gold"
+          backgroundColor={theme}
+          margin-24
+          onPress={() => {
+            navigation.navigate("Home");
+          }}
+        ></Button>
+      </View>
+    );
+  }
+
+  return (
+    <ScrollView>
+      <View center>
+        <View paddingV-40>
+          <Text text40R color={theme}>
+            Your purchase history
+          </Text>
+        </View>
         <ScrollView horizontal>
           <View style={styles.table}>
             <View style={styles.row}>
@@ -74,10 +95,8 @@ const HistoryScreen = () => {
             })}
           </View>
         </ScrollView>
-      ) : (
-        <Text>Loading...</Text>
-      )}
-    </View>
+      </View>
+    </ScrollView>
   );
 };
 

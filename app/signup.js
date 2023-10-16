@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useRef } from "react";
 import {
   View,
   TextInput,
@@ -22,16 +22,17 @@ const RegisterPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
+  const toastRef = useRef(null); 
   
   const handleContinue = () => {
     if (email === "") {
-      this.toast.show("Please enter your email", 2000);
+      toastRef.current.show("Please enter your email", 2000);
       return;
     } else if (password === "") {
-      this.toast.show("Please enter your last name", 2000);
+      toastRef.current.show("Please enter your last name", 2000);
       return;
     } else if (phone === "") {
-      this.toast.show("Please enter your phone number", 2000);
+      toastRef.current.show("Please enter your phone number", 2000);
       return;
     } 
     else{
@@ -43,12 +44,12 @@ const RegisterPage = () => {
       })
       .then((response) => {
         console.log(response.data);
-        this.toast.show("Account created successfully", 2000);
+        toastRef.current.show("Account created successfully", 2000);
       })
       .catch((error) => {
         if(error.response.status === 401){
           console.log(error.response.data);
-          this.toast.show(error.response.data.message, 2000);
+          toastRef.current.show(error.response.data.message, 2000);
       }
         else console.log(error);
       });
@@ -90,7 +91,7 @@ const RegisterPage = () => {
             value={phone}
           />
           <TouchableOpacity style={styles.button} onPress={handleContinue}>
-            <Text style={styles.buttonText}>Next</Text>
+            <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
           <View style={styles.smallText}>
             <Text style={styles.already}>Already have an account? </Text>
@@ -100,7 +101,7 @@ const RegisterPage = () => {
           </View>
         </ScrollView>
       </SafeAreaView>
-      <Toast ref={(toast) => (this.toast = toast)} />
+      <Toast ref={toastRef} />
     </KeyboardAvoidingView>
   );
 };
@@ -147,6 +148,7 @@ const styles = StyleSheet.create({
   login: {
     color: "#73150F",
     fontSize: 16,
+    fontWeight: "bold",
   },
   smallText: {
     flexDirection: "row",

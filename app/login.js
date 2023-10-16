@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   TextInput,
   TouchableOpacity,
@@ -23,6 +23,13 @@ const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const toastRef = useRef(null); 
+
+  const showToast = (message) => {
+    if (toastRef.current) {
+      toastRef.current.show(message, 2000);
+    }
+  };
 
   useEffect(() => {
     checkAuthentication();
@@ -30,7 +37,7 @@ const LoginPage = () => {
 
   const checkAuthentication = async () => {
     try {
-      const token = await AsyncStorage.getItem("swToken");
+      const token = await AsyncStorage.getItem("userId");
       if (token) {
         // User is already authenticated, navigate to the dashboard screen
         navigation.navigate("dashboard");
@@ -46,19 +53,18 @@ const LoginPage = () => {
 
   const onSubmit = (val) => {
     if (val.username === "") {
-      this.toast.show("Please enter your email address", 2000);
+      toastRef.current.show("Please enter your email address", 2000);
       return;
     } else if (
       !val.username.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)
     ) {
-      this.toast.show("You have entered an invalid address", 2000);
+      toastRef.current.show("You have entered an invalid address", 2000);
       return;
     } else if (val.password === "") {
-      this.toast.show("Please enter your password", 2000);
+      toastRef.current.show("Please enter your password", 2000);
       return;
     } else {
-      checkCredentials(val.username, val.password)
-      .catch((error) => {
+      checkCredentials(val.username, val.password).catch((error) => {
         console.error("Error checking credentials:", error);
       });
     }
@@ -75,12 +81,10 @@ const LoginPage = () => {
       if (response.data.success) {
         // If the response indicates success, navigate to the dashboard
         await AsyncStorage.setItem("userId", response.data.id);
-        navigation.navigate('dashboard');
-        this.toast.show("Login successful", 2000);
-        return true; // Return true for success
+        showToast("Login successful")
+        navigation.navigate("dashboard");
       } else {
-        this.toast.show("Invalid Email or Password", 2000);
-        return false; // Return false for failure
+        toastRef.current.show("Invalid Email or Password", 2000);
       }
     } catch (error) {
       console.error("Error checking credentials:", error);
@@ -138,7 +142,7 @@ const LoginPage = () => {
           </Text>
         </Text>
       </ScrollView>
-      <Toast ref={(toast) => (this.toast = toast)} />
+      <Toast ref={toastRef} />
     </KeyboardAvoidingView>
   );
 };
