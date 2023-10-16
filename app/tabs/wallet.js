@@ -9,6 +9,7 @@ import { apiURL } from '../../utils';
 import { useFocusEffect, useNavigation } from 'expo-router';
 const WalletScreen = () => {
   const [balance, setBalance] = useState(0);
+  const [grams, setGrams] = useState(0);
   const navigation=useNavigation();
 
   useFocusEffect(
@@ -23,7 +24,11 @@ const WalletScreen = () => {
       .then((res) => {
         if(res.data.wallet){
           const newBal = parseFloat(res.data.wallet);
-        setBalance(newBal.toFixed(2));
+          setBalance(newBal.toFixed(2));
+        }
+        if(res.data.grams){
+          const newGrams = parseFloat(res.data.grams);
+          setGrams(newGrams.toFixed(2));
         }
       })
       .catch((err) => {
@@ -39,6 +44,9 @@ const WalletScreen = () => {
         </Text>
         <Text text40H center>
           ₹{balance}
+        </Text>
+        <Text text40H center>
+          {grams}g
         </Text>
       </Card>
 
