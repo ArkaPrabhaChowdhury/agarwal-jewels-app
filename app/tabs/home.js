@@ -6,6 +6,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
 import { apiURL } from "../../utils";
 import axios from "axios";
+import Toast from "react-native-easy-toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HomeScreen = () => {
@@ -53,7 +54,12 @@ const HomeScreen = () => {
       const id = await AsyncStorage.getItem("userId"); // Replace with the actual user ID
       const response = axios.patch(`${apiURL}/transfers/wallet/${id}`, {
         purchased: amount,
+        action: "+"
       });
+      const r = axios.patch(`${apiURL}/transfers/grams/${id}`, {
+        grams: grams,
+        action: "+"
+      })
       const res = axios.post(`${apiURL}/transfers/create`, {
         clientId: id,
         grams: grams,
@@ -62,10 +68,11 @@ const HomeScreen = () => {
 
       if (response.status === 200) {
         console.log("Wallet updated successfully");
-        console.log(res.data);
+        this.toast.show("Purchase Successful", 2000);
       }
     } catch (error) {
       console.error("Error: ", error);
+      this.toast.show("Purchase Failed", 2000);
     }
   };
 
@@ -157,6 +164,7 @@ const HomeScreen = () => {
           />
         </Card>
       </View>
+      <Toast ref={(toast) => (this.toast = toast)} />
     </ScrollView>
   );
 };
