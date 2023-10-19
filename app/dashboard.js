@@ -16,6 +16,7 @@ import WalletScreen from "./tabs/wallet";
 import NotifcationsScreen from "./tabs/notifications";
 import { Image } from "expo-image";
 import { View } from "react-native-ui-lib";
+import HistoryScreen from "./tabs/history";
 
 const Tab = createBottomTabNavigator();
 const DashboardPage = () => {
@@ -44,6 +45,7 @@ const DashboardPage = () => {
         BackHandler.removeEventListener("hardwareBackPress", onBackPress);
     }, [])
   );
+  
   const navigation = useNavigation();
 
   const openWhatsapp = () => {
@@ -56,12 +58,12 @@ const DashboardPage = () => {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light" />
       <View style={styles.navbar}>
-        <Image source={require("./assets/logo.svg")} style={styles.logo}/>
+        <Image source={require("./assets/logo.png")} style={styles.logo}/>
 
         <TouchableOpacity onPress={openWhatsapp}>
           <Image
             style={styles.supportIcon}
-            source={require("./assets/support.svg")}
+            source={require("./assets/support.png")}
           />
         </TouchableOpacity>
       </View>
@@ -96,6 +98,21 @@ const DashboardPage = () => {
                 <Ionicons name="ios-wallet-sharp" size={26} color={theme} />
               ) : (
                 <Ionicons name="ios-wallet-outline" size={26} color={theme} />
+              ),
+            headerShown: false,
+            tabBarActiveTintColor: theme,
+            tabBarInactiveTintColor: theme,
+          }}
+        />
+        <Tab.Screen
+          name="History"
+          component={HistoryScreen}
+          options={{
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <Ionicons name="time-sharp" size={26} color={theme} />
+              ) : (
+                <Ionicons name="time-outline" size={26} color={theme} />
               ),
             headerShown: false,
             tabBarActiveTintColor: theme,
@@ -146,11 +163,17 @@ const styles = StyleSheet.create({
     height: 120,
   },
   navbar: {
-    height: 90,
+    height: Platform.select({
+      web:75,
+      default:90
+    }),
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: "#73150F",
-    paddingTop: 40,
+    paddingTop: Platform.select({
+      web:10,
+      default:40
+    }),
     paddingBottom: 15,
     paddingHorizontal: 20,
     alignItems: "center",
