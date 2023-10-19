@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Card, Switch, Text, View } from "react-native-ui-lib";
+import { Button, Card, Text, View, Switch } from "react-native-ui-lib";
 import { theme } from "../styles";
 import { ScrollView, TextInput } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -26,11 +26,28 @@ const WalletScreen = () => {
     }, [])
   );
 
-  const fetchWallet = async () => {
-      const id = await AsyncStorage.getItem("userId");
-      axios.get(`${apiURL}/users/${id}`)
+  useEffect(() => {
+    getRate();
+  }, []);
+
+  const getRate = async () => {
+    axios
+      .get(`${apiURL}/rate`)
       .then((res) => {
-        if(res.data.wallet){
+        console.log(res.data[0].goldrate);
+        setRate(res.data[0].goldrate);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const fetchWallet = async () => {
+    const id = await AsyncStorage.getItem("userId");
+    axios
+      .get(`${apiURL}/users/${id}`)
+      .then((res) => {
+        if (res.data.wallet) {
           const newBal = parseFloat(res.data.wallet);
           setBalance(newBal.toFixed(2));
           setLoading(false);
@@ -45,7 +62,7 @@ const WalletScreen = () => {
         }
       })
       .catch((err) => {
-        console.log(err)
+        console.log(err);
       });
   };
 
@@ -213,5 +230,4 @@ const WalletScreen = () => {
   );
 };
 
-
-export default WalletScreen
+export default WalletScreen;

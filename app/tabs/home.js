@@ -8,6 +8,8 @@ import { apiURL } from "../../utils";
 import axios from "axios";
 import Toast from "react-native-easy-toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Linking from "expo-linking";
+import Loading from "./loading";
 
 const HomeScreen = () => {
   const [rate, setRate] = useState("0000");
@@ -27,6 +29,7 @@ const HomeScreen = () => {
       .then((res) => {
         console.log(res.data[0].goldrate);
         setRate(res.data[0].goldrate);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -74,16 +77,60 @@ const HomeScreen = () => {
         grams: buyGrams,
         action: "+",
       });
-      const res = axios.post(`${apiURL}/transfers/create`, {
-        clientId: id,
-        grams: buyGrams,
-        amount: buyAmount,
-      });
+      axios
+        .post(`${apiURL}/transfers/create`, {
+          clientId: id,
+          grams: buyGrams,
+          amount: buyAmount,
+        })
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
       console.log("Wallet updated successfully");
     } catch (error) {
       console.error("Error: ", error);
       this.toast.show("Purchase Failed", 2000);
     }
+  };
+
+  //
+  const handleUPI = async () => {
+    var data = JSON.stringify({
+      key: "109edfed-6ff4-4fe0-b3f9-6673a509e368",
+      client_txn_id: "23456789",
+      amount: "100",
+      p_info: "Product Name",
+      customer_name: "Jon Doe",
+      customer_email: "jondoe@gmail.com",
+      customer_mobile: "9876543210",
+      redirect_url: "http://google.com",
+      udf1: "user defined field 1",
+      udf2: "user defined field 2",
+      udf3: "user defined field 3",
+    });
+
+    var config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://api.ekqr.in/api/create_order",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+        Linking.openURL(response.data.payment_url);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
 
   return (
@@ -98,9 +145,16 @@ const HomeScreen = () => {
           <Text text60BO marginB-8>
             Current Gold Rate/gm
           </Text>
-          <Text text40H center>
-            ₹{rate}
-          </Text>
+
+          {loading ? (
+            <Text center>
+              <Loading />
+            </Text>
+          ) : (
+            <Text text40H color={theme} center>
+              ₹ {rate}
+            </Text>
+          )}
         </Card>
 
         <Card flex-1 center marginT-24 paddingH-12 paddingV-24>
@@ -170,7 +224,7 @@ const HomeScreen = () => {
             label="Purchase"
             backgroundColor={theme}
             marginT-24
-            onPress={handlePurchase}
+            onPress={handleUPI}
           />
         </Card>
       </View>
