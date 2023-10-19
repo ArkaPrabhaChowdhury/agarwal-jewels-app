@@ -68,27 +68,62 @@ const HomeScreen = () => {
         purchased: buyAmount,
         action: "+",
       });
-      const res = axios.post(`${apiURL}/transfers/create`, {
+     axios.post(`${apiURL}/transfers/create`, {
         clientId: id,
         grams: buyGrams,
         amount: buyAmount,
-      });
+      }).then((res) => {
+
+
+        var data = JSON.stringify({
+          "key": "109edfed-6ff4-4fe0-b3f9-6673a509e368",
+          "client_txn_id": `${res.data._id}`,
+          "amount": `${buyAmount}`,
+          "p_info": "Gold",
+          "customer_name": "New User",
+          "customer_email": "jondoe@gmail.com",
+          "customer_mobile": "9876543210",
+          "redirect_url": "http://google.com",
+          "udf1": "user defined field 1",
+          "udf2": "user defined field 2",
+          "udf3": "user defined field 3"
+        });
+        
+        var config = {
+          method: 'post',
+        maxBodyLength: Infinity,
+          url: 'https://api.ekqr.in/api/create_order',
+          headers: { 
+            'Content-Type': 'application/json'
+          },
+          data : data
+        };
+        
+        axios(config)
+        .then(function (response) {
+          console.log(JSON.stringify(response.data));
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+
+        console.log(res.data);
+
+      }).catch((err) => {console.log(err)});
+      
       console.log("Wallet updated successfully");
     } catch (error) {
       console.error("Error: ", error);
     }
   };
 
+
+  //
   const handleUPI = async () => {
-    try {
-      Linking.openURL(
-        "upi://pay?pa=7032774388@axisb&pn=Subharun%20Chowdhury&mc=0000&mode=02&purpose=00"
-      ).then((res) => {
-        console.log(res);
-      });
-    } catch (error) {
-      console.log(error);
-    }
+
+      
+
+ 
   };
 
   return (
