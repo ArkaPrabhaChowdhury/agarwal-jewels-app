@@ -18,11 +18,13 @@ const WalletScreen = () => {
   const [sellAmount, setSellAmount] = useState("");
   const [rate, setRate] = React.useState(0);
   const [loading, setLoading] = useState(true);
+  const [email, setEmail] = useState("");
   const navigation = useNavigation();
 
   useFocusEffect(
     React.useCallback(() => {
       fetchWallet();
+      getEmail();
     }, [])
   );
 
@@ -51,11 +53,10 @@ const WalletScreen = () => {
           const newBal = parseFloat(res.data.wallet);
           setBalance(newBal.toFixed(2));
           setLoading(false);
+        } else {
+          setBalance();
         }
-        else{
-          setBalance()
-        }
-        if(res.data.grams){
+        if (res.data.grams) {
           const newGrams = parseFloat(res.data.grams);
           setGrams(newGrams.toFixed(2));
           setLoading(false);
@@ -64,6 +65,18 @@ const WalletScreen = () => {
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  const getEmail = async () => {
+    const id = await AsyncStorage.getItem("userId");
+    axios.get(`${apiURL}/users/${id}`)
+    .then((res) => {
+      console.log(res.data.email);
+      setEmail(res.data.email);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   };
 
   const handleSellGrams = (text) => {
@@ -80,23 +93,70 @@ const WalletScreen = () => {
 
   const handleUpi = (text) => {
     setUpi(text);
-  }
+  };
 
   const handleToggle = () => {
     setIsOnline(!isOnline);
-  }
+  };
 
-  const handleSell = async () => {};
+  
+
+  const handleSell = async () => {
+    if (sellAmount == "" || sellGrams == "" || sellAmount == 0 || sellGrams == 0) {
+      showToast("Please enter a valid amount or grams");
+      console.log("Please enter a valid amount or grams");
+      return;
+    }
+    if(sellAmount > balance || sellGrams > grams){
+      showToast("Insufficient funds");
+      console.log("Insufficient funds");
+      return;
+    }
+    const id = await AsyncStorage.getItem("userId");
+    let req;
+
+    if(isOnline){
+      req = {
+        clientId: id,
+        UPI: upi,
+        email: email,
+        rate: rate,
+        grams: sellGrams,
+        status: false
+      }
+    }
+    else{
+      req = {
+        clientId: id,
+        email: email,
+        rate: rate,
+        grams: sellGrams,
+        status: false
+      }
+    }
+    try{
+      const res = axios.post(`${apiURL}/sell`, req);
+    }
+    catch (err){
+      console.log("Error in selling gold");
+    }
+  };
 
   return (
     <ScrollView flex-1 center>
       <View center>
-        <Card padding-12 center marginT-24 marginH-18 style={{
-          width: Platform.select({
-            web:300,
-            default:"full"
-          })
-        }}>
+        <Card
+          padding-12
+          center
+          marginT-24
+          marginH-18
+          style={{
+            width: Platform.select({
+              web: 300,
+              default: "full",
+            }),
+          }}
+        >
           <Text text60BO marginB-8>
             Wallet Balance
           </Text>
@@ -109,8 +169,6 @@ const WalletScreen = () => {
               ₹ {balance} {"\n"}
               {grams} grams
             </Text>
-            
-            
           )}
         </Card>
 
@@ -131,11 +189,13 @@ const WalletScreen = () => {
               Quick sell
             </Text>
           </View>
-          <View>
-            <Switch value={isOnline} onValueChange={handleToggle} marginV-8/>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text text60H>Offline</Text>
+            <Switch value={isOnline} onValueChange={handleToggle} marginV-8 marginH-4/>
+            <Text text60H>Online</Text>
           </View>
 
-          { isOnline ? (
+          {isOnline ? (
             <View>
               <TextInput
                 style={{
@@ -155,12 +215,11 @@ const WalletScreen = () => {
               />
             </View>
           ) : (
-            <View>
-
-            </View>
-          )
-
-          }
+            <Button
+            label="Address"
+            backgroundColor={theme}
+          />
+          )}
           <View
             marginT-24
             style={{
