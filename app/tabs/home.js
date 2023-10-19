@@ -3,7 +3,7 @@ import Text from "react-native-ui-lib/text";
 import { commonStyles, theme } from "../styles";
 import { ScrollView, TextInput } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { apiURL } from "../../utils";
 import axios from "axios";
 import Toast from "react-native-easy-toast";
@@ -11,9 +11,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HomeScreen = () => {
   const [rate, setRate] = useState("0000");
-  const [grams, setGrams] = useState("");
-  const [amount, setAmount] = useState("");
+  const [buyGrams, setBuyGrams] = useState("");
+  const [buyAmount, setBuyAmount] = useState("");
   const [clientId, setClientId] = useState("");
+  const [loading, setLoading] = useState(true);
+  const toastRef = useRef(null);
 
   useEffect(() => {
     getRate();
@@ -31,16 +33,22 @@ const HomeScreen = () => {
       });
   };
 
-  const handleGrams = (text) => {
-    setGrams(text);
-    const convertedAmount = text ? parseFloat(text) * rate : 0; // Set to 0 if empty
-    setAmount(convertedAmount.toFixed(2));
+  const showToast = (message) => {
+    if (toastRef.current) {
+      toastRef.current.show(message, 2000);
+    }
   };
 
-  const handleAmount = (text) => {
-    setAmount(text);
+  const handleBuyGrams = (text) => {
+    setBuyGrams(text);
+    const convertedAmount = text ? parseFloat(text) * rate : 0; // Set to 0 if empty
+    setBuyAmount(convertedAmount.toFixed(2));
+  };
+
+  const handleBuyAmount = (text) => {
+    setBuyAmount(text);
     const convertedAmount = text ? parseFloat(text) / rate : 0; // Set to 0 if empty
-    setGrams(convertedAmount.toFixed(2));
+    setBuyGrams(convertedAmount.toFixed(2));
   };
 
   const getId = async () => {
@@ -51,25 +59,28 @@ const HomeScreen = () => {
 
   const handlePurchase = async () => {
     try {
+      if(buyAmount == "" || buyGrams == "" || buyAmount == 0 || buyGrams == 0){
+        showToast("Please enter a valid amount or grams");
+        console.log("Please enter a valid amount or grams");
+        return;
+      }
+
+    try {
       const id = await AsyncStorage.getItem("userId"); // Replace with the actual user ID
       const response = axios.patch(`${apiURL}/transfers/wallet/${id}`, {
-        purchased: amount,
-        action: "+"
+        purchased: buyAmount,
+        action: "+",
       });
-      const r = axios.patch(`${apiURL}/transfers/grams/${id}`, {
-        grams: grams,
-        action: "+"
-      })
+      const gres = axios.patch(`${apiURL}/transfers/grams/${id}`, {
+        grams: buyGrams,
+        action: "+",
+      });
       const res = axios.post(`${apiURL}/transfers/create`, {
         clientId: id,
-        grams: grams,
-        amount: amount,
+        grams: buyGrams,
+        amount: buyAmount,
       });
-
-      if (response.status === 200) {
-        console.log("Wallet updated successfully");
-        this.toast.show("Purchase Successful", 2000);
-      }
+      console.log("Wallet updated successfully");
     } catch (error) {
       console.error("Error: ", error);
       this.toast.show("Purchase Failed", 2000);
@@ -129,8 +140,8 @@ const HomeScreen = () => {
               }}
               placeholder="Grams"
               inputMode="numeric"
-              value={grams}
-              onChangeText={handleGrams}
+              value={buyGrams}
+              onChangeText={handleBuyGrams}
               autoCorrect={false}
               autoComplete="off"
               spellCheck={false}
@@ -149,8 +160,8 @@ const HomeScreen = () => {
               }}
               placeholder="Amount"
               inputMode="numeric"
-              value={amount}
-              onChangeText={handleAmount}
+              value={buyAmount}
+              onChangeText={handleBuyAmount}
               autoCorrect={false}
               autoComplete="off"
               spellCheck={false}
@@ -164,7 +175,7 @@ const HomeScreen = () => {
           />
         </Card>
       </View>
-      <Toast ref={(toast) => (this.toast = toast)} />
+      <Toast ref={toastRef} />
     </ScrollView>
   );
 };
