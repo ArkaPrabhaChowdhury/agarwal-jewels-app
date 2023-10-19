@@ -224,7 +224,7 @@ const HomeScreen = () => {
             label="Purchase"
             backgroundColor={theme}
             marginT-24
-            onPress={handleUPI}
+            onPress={handlePurchase}
           />
         </Card>
       </View>
