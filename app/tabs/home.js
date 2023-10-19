@@ -7,6 +7,13 @@ import { useState, useEffect } from "react";
 import { apiURL } from "../../utils";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+<<<<<<< Updated upstream
+=======
+import * as Linking from "expo-linking";
+import Loading from "./loading";
+import Toast from "react-native-easy-toast";
+import { useFocusEffect } from "expo-router/src/useFocusEffect";
+>>>>>>> Stashed changes
 
 const HomeScreen = () => {
   const [rate, setRate] = useState("0000");
@@ -14,7 +21,20 @@ const HomeScreen = () => {
   const [amount, setAmount] = useState("");
 
   useEffect(() => {
+<<<<<<< Updated upstream
     axios.get(`${apiURL}/rate`)
+=======
+    getRate();
+  }, []);
+
+//payment thingy
+
+
+
+  const getRate = async () => {
+    axios
+      .get(`${apiURL}/rate`)
+>>>>>>> Stashed changes
       .then((res) => {
         console.log(res.data[0].goldrate)
         setRate(res.data[0].goldrate)
@@ -39,7 +59,77 @@ const HomeScreen = () => {
   const getId = async() => {
     const id = await AsyncStorage.getItem("userId");
     console.log(id);
+<<<<<<< Updated upstream
   }
+=======
+  };
+
+  const handlePurchase = async () => {
+    showToast("Wallet updated successfully");
+    try {
+      const id = await AsyncStorage.getItem("userId"); // Replace with the actual user ID
+      const response = axios.patch(`${apiURL}/transfers/wallet/${id}`, {
+        purchased: buyAmount,
+        action: "+",
+      });
+     axios.post(`${apiURL}/transfers/create`, {
+        clientId: id,
+        grams: buyGrams,
+        amount: buyAmount,
+      }).then((res) => {
+
+
+        var data = JSON.stringify({
+          "key": "109edfed-6ff4-4fe0-b3f9-6673a509e368",
+          "client_txn_id": `${res.data._id}`,
+          "amount": `${buyAmount}`,
+          "p_info": "Gold",
+          "customer_name": "New User",
+          "customer_email": "jondoe@gmail.com",
+          "customer_mobile": "9876543210",
+          "redirect_url": "http://google.com",
+          "udf1": "user defined field 1",
+          "udf2": "user defined field 2",
+          "udf3": "user defined field 3"
+        });
+        
+        var config = {
+          method: 'post',
+        maxBodyLength: Infinity,
+          url: 'https://api.ekqr.in/api/create_order',
+          headers: { 
+            'Content-Type': 'application/json'
+          },
+          data : data
+        };
+        
+        axios(config)
+        .then(function (response) {
+          console.log(JSON.stringify(response.data));
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+
+        console.log(res.data);
+
+      }).catch((err) => {console.log(err)});
+      
+      console.log("Wallet updated successfully");
+    } catch (error) {
+      console.error("Error: ", error);
+    }
+  };
+
+
+  //
+  const handleUPI = async () => {
+
+      
+
+ 
+  };
+>>>>>>> Stashed changes
 
   return (
     <ScrollView>
