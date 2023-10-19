@@ -7,13 +7,10 @@ import { useState, useEffect } from "react";
 import { apiURL } from "../../utils";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-<<<<<<< Updated upstream
-=======
 import * as Linking from "expo-linking";
 import Loading from "./loading";
 import Toast from "react-native-easy-toast";
 import { useFocusEffect } from "expo-router/src/useFocusEffect";
->>>>>>> Stashed changes
 
 const HomeScreen = () => {
   const [rate, setRate] = useState("0000");
@@ -21,9 +18,6 @@ const HomeScreen = () => {
   const [amount, setAmount] = useState("");
 
   useEffect(() => {
-<<<<<<< Updated upstream
-    axios.get(`${apiURL}/rate`)
-=======
     getRate();
   }, []);
 
@@ -34,7 +28,6 @@ const HomeScreen = () => {
   const getRate = async () => {
     axios
       .get(`${apiURL}/rate`)
->>>>>>> Stashed changes
       .then((res) => {
         console.log(res.data[0].goldrate)
         setRate(res.data[0].goldrate)
@@ -59,9 +52,6 @@ const HomeScreen = () => {
   const getId = async() => {
     const id = await AsyncStorage.getItem("userId");
     console.log(id);
-<<<<<<< Updated upstream
-  }
-=======
   };
 
   const handlePurchase = async () => {
@@ -129,7 +119,6 @@ const HomeScreen = () => {
 
  
   };
->>>>>>> Stashed changes
 
   return (
     <ScrollView>
