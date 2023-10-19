@@ -35,7 +35,7 @@ const HomeScreen = () => {
       .catch((err) => {
         console.log(err)
       });
-  }, []);
+    };
 
   const handleGrams = (text) => {
     setGrams(text);
