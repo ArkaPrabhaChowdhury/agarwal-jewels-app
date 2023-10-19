@@ -58,7 +58,6 @@ const HomeScreen = () => {
   };
 
   const handlePurchase = async () => {
-    try {
       if(buyAmount == "" || buyGrams == "" || buyAmount == 0 || buyGrams == 0){
         showToast("Please enter a valid amount or grams");
         console.log("Please enter a valid amount or grams");
