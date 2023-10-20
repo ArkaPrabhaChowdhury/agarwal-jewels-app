@@ -75,13 +75,15 @@ const HomeScreen = () => {
           amount: buyAmount,
         })
         .then((res) => {
+          console.log(res.data.id);
           axios
-            .post(`${apiURL}/upi/create-order/${id}`, {
-              transferId: res.data._id,
+            .post(`${apiURL}/upi/create_order/${id}`, {
+              transferId: res.data.id,
               amount: buyAmount,
             })
             .then((res) => {
               console.log(res.data);
+              Linking.openURL(res.data.data.payment_url);
             })
             .catch((err) => {
               console.log(err);

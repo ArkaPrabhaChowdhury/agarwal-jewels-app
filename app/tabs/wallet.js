@@ -33,6 +33,7 @@ const WalletScreen = () => {
       .then((res) => {
         console.log(res.data[0].goldrate);
         setRate(res.data[0].goldrate);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -47,6 +48,10 @@ const WalletScreen = () => {
         if (res.data.wallet) {
           const newBal = parseFloat(res.data.wallet);
           setBalance(newBal.toFixed(2));
+          setLoading(false);
+        }
+        else{
+          setBalance(0);
           setLoading(false);
         }
       })
