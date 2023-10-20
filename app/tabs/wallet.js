@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Button, Card, Text, View, Switch } from "react-native-ui-lib";
 import { theme } from "../styles";
 import { ScrollView, TextInput } from "react-native";
@@ -9,6 +9,8 @@ import { apiURL } from "../../utils";
 import { useFocusEffect, useNavigation } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Loading from "./loading";
+import Toast from "react-native-easy-toast";
+
 const WalletScreen = () => {
   const [isOnline, setIsOnline] = useState(false);
   const [upi, setUpi] = useState("");
@@ -20,6 +22,7 @@ const WalletScreen = () => {
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
   const navigation = useNavigation();
+  const toastRef = useRef(null);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -43,6 +46,12 @@ const WalletScreen = () => {
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  const showToast = (message) => {
+    if (toastRef.current) {
+      toastRef.current.show(message, 2000);
+    }
   };
 
   const fetchWallet = async () => {
@@ -76,7 +85,6 @@ const WalletScreen = () => {
     const id = await AsyncStorage.getItem("userId");
     axios.get(`${apiURL}/users/${id}`)
     .then((res) => {
-      console.log(res.data.email);
       setEmail(res.data.email);
     })
     .catch((err) => {
@@ -141,6 +149,9 @@ const WalletScreen = () => {
     }
     try{
       const res = axios.post(`${apiURL}/sell`, req);
+      if(res){
+        showToast("Request sent successfully");
+      }
     }
     catch (err){
       console.log("Error in selling gold");
@@ -290,6 +301,7 @@ const WalletScreen = () => {
           />
         </Card>
       </View>
+      <Toast ref={toastRef} />
     </ScrollView>
   );
 };
