@@ -75,7 +75,17 @@ const HomeScreen = () => {
           amount: buyAmount,
         })
         .then((res) => {
-          console.log(res.data);
+          axios
+            .post(`${apiURL}/upi/create-order/${id}`, {
+              transferId: res.data._id,
+              amount: buyAmount,
+            })
+            .then((res) => {
+              console.log(res.data);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         })
         .catch((err) => {
           console.log(err);
@@ -85,42 +95,6 @@ const HomeScreen = () => {
     } catch (error) {
       console.error("Error: ", error);
     }
-  };
-
-  //
-  const handleUPI = async () => {
-    var data = JSON.stringify({
-      key: "109edfed-6ff4-4fe0-b3f9-6673a509e368",
-      client_txn_id: "23456789",
-      amount: "100",
-      p_info: "Product Name",
-      customer_name: "Jon Doe",
-      customer_email: "jondoe@gmail.com",
-      customer_mobile: "9876543210",
-      redirect_url: "http://google.com",
-      udf1: "user defined field 1",
-      udf2: "user defined field 2",
-      udf3: "user defined field 3",
-    });
-
-    var config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "https://api.ekqr.in/api/create_order",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
-    };
-
-    axios(config)
-      .then(function (response) {
-        console.log(JSON.stringify(response.data));
-        Linking.openURL(response.data.payment_url);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
   };
 
   return (
@@ -214,7 +188,7 @@ const HomeScreen = () => {
             label="Purchase"
             backgroundColor={theme}
             marginT-24
-            onPress={handleUPI}
+            onPress={handlePurchase}
           />
         </Card>
       </View>
