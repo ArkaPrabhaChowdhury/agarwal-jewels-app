@@ -6,10 +6,10 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { useState, useEffect, useRef } from "react";
 import { apiURL } from "../../utils";
 import axios from "axios";
+import Toast from "react-native-easy-toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Linking from "expo-linking";
 import Loading from "./loading";
-import Toast from "react-native-easy-toast";
 
 const HomeScreen = () => {
   const [rate, setRate] = useState("0000");
@@ -61,11 +61,20 @@ const HomeScreen = () => {
   };
 
   const handlePurchase = async () => {
-    showToast("Wallet updated successfully");
+      if(buyAmount == "" || buyGrams == "" || buyAmount == 0 || buyGrams == 0){
+        showToast("Please enter a valid amount or grams");
+        console.log("Please enter a valid amount or grams");
+        return;
+      }
+
     try {
       const id = await AsyncStorage.getItem("userId"); // Replace with the actual user ID
       const response = axios.patch(`${apiURL}/transfers/wallet/${id}`, {
         purchased: buyAmount,
+        action: "+",
+      });
+      const gres = axios.patch(`${apiURL}/transfers/grams/${id}`, {
+        grams: buyGrams,
         action: "+",
       });
       axios
@@ -84,6 +93,7 @@ const HomeScreen = () => {
       console.log("Wallet updated successfully");
     } catch (error) {
       console.error("Error: ", error);
+      this.toast.show("Purchase Failed", 2000);
     }
   };
 
@@ -214,7 +224,7 @@ const HomeScreen = () => {
             label="Purchase"
             backgroundColor={theme}
             marginT-24
-            onPress={handleUPI}
+            onPress={handlePurchase}
           />
         </Card>
       </View>
