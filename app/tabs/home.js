@@ -60,53 +60,74 @@ const HomeScreen = () => {
     console.log(id);
   };
 
+  // const handlePurchase = async () => {
+  //   if (buyAmount == "" || buyGrams == "" || buyAmount == 0 || buyGrams == 0) {
+  //     showToast("Please enter a valid amount or grams");
+  //     console.log("Please enter a valid amount or grams");
+  //     return;
+  //   }
+
+  //   try {
+  //     const id = await AsyncStorage.getItem("userId"); // Replace with the actual user ID
+  //     const response = axios.patch(`${apiURL}/transfers/wallet/${id}`, {
+  //       purchased: buyAmount,
+  //       action: "+",
+  //     });
+  //     const gres = axios.patch(`${apiURL}/transfers/grams/${id}`, {
+  //       grams: buyGrams,
+  //       action: "+",
+  //     });
+  //     axios
+  //       .post(`${apiURL}/transfers/create`, {
+  //         clientId: id,
+  //         grams: buyGrams,
+  //         amount: buyAmount,
+  //       })
+  //       .then((res) => {
+  //         console.log(res.data.id);
+  //         axios
+  //           .post(`${apiURL}/upi/create_order/${id}`, {
+  //             transferId: res.data.id,
+  //             amount: buyAmount,
+  //           })
+  //           .then((res) => {
+  //             console.log(res.data);
+  //             Linking.openURL(res.data.data.payment_url);
+  //           })
+  //           .catch((err) => {
+  //             console.log(err);
+  //           });
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+
+  //     console.log("Wallet updated successfully");
+  //   } catch (error) {
+  //     console.error("Error: ", error);
+  //     this.toast.show("Purchase Failed", 2000);
+  //   }
+  // };
+
   const handlePurchase = async () => {
-      if(buyAmount == "" || buyGrams == "" || buyAmount == 0 || buyGrams == 0){
-        showToast("Please enter a valid amount or grams");
-        console.log("Please enter a valid amount or grams");
-        return;
-      }
-
-    try {
-      const id = await AsyncStorage.getItem("userId"); // Replace with the actual user ID
-      const response = axios.patch(`${apiURL}/transfers/wallet/${id}`, {
-        purchased: buyAmount,
-        action: "+",
-      });
-      const gres = axios.patch(`${apiURL}/transfers/grams/${id}`, {
-        grams: buyGrams,
-        action: "+",
-      });
-      axios
-        .post(`${apiURL}/transfers/create`, {
-          clientId: id,
-          grams: buyGrams,
-          amount: buyAmount,
-        })
-        .then((res) => {
-          console.log(res.data.id);
-          axios
-            .post(`${apiURL}/upi/create_order/${id}`, {
-              transferId: res.data.id,
-              amount: buyAmount,
-            })
-            .then((res) => {
-              console.log(res.data);
-              Linking.openURL(res.data.data.payment_url);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
-      console.log("Wallet updated successfully");
-    } catch (error) {
-      console.error("Error: ", error);
-      this.toast.show("Purchase Failed", 2000);
+    if (buyAmount == "" || buyGrams == "" || buyAmount == 0 || buyGrams == 0) {
+      showToast("Please enter a valid amount or grams");
+      console.log("Please enter a valid amount or grams");
+      return;
     }
+    const id = await AsyncStorage.getItem("userId"); // Replace with the actual user ID
+    axios
+      .post(`${apiURL}/upi/create_order/${id}`, {
+        amount: buyAmount,
+        grams: buyGrams,
+      })
+      .then((res) => {
+        console.log(res.data);
+        Linking.openURL(res.data.data.payment_url);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
