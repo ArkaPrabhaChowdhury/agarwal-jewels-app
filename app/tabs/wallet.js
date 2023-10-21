@@ -66,14 +66,15 @@ const WalletScreen = () => {
           setBalance(newBal.toFixed(2));
           setLoading(false);
         } else {
-          setBalance();
+          setBalance(0);
+          setLoading(false);
         }
         if (res.data.grams) {
           const newGrams = parseFloat(res.data.grams);
           setGrams(newGrams.toFixed(2));
           setLoading(false);
         } else {
-          setBalance(0);
+          setGrams(0);
           setLoading(false);
         }
       })
@@ -135,6 +136,13 @@ const WalletScreen = () => {
       return;
     }
     const id = await AsyncStorage.getItem("userId");
+
+    const user = await axios.get(`${apiURL}/users/${id}`);
+    if(!user.data.kyc_number){
+      showToast("Please complete your KYC first");
+      return;
+    }
+
     let req;
 
     if (isOnline) {
