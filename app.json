@@ -1,6 +1,7 @@
 {
   "expo": {
-    "scheme": "acme",
+    "scheme": "agarwaljewelsapp",
+    "icon": "./app/assets/logo.png",
     "web": {
       "bundler": "metro"
     },
