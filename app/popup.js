@@ -36,7 +36,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 20,
-    width: '20%',
     alignItems: 'center',
   },
   cardText: {

@@ -20,9 +20,11 @@
     "expo-router": "2.0.0",
     "expo-splash-screen": "~0.20.4",
     "expo-status-bar": "~1.6.0",
+    "expo-updates": "~0.18.16",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.72.5",
+    "react-native-app-intro-slider": "^4.0.4",
     "react-native-easy-toast": "^2.3.0",
     "react-native-gesture-handler": "~2.12.0",
     "react-native-image-picker": "^7.0.0",
@@ -32,8 +34,7 @@
     "react-native-ui-lib": "^7.8.0",
     "react-native-upi-payment": "^1.0.5",
     "react-native-web": "~0.19.6",
-    "toast": "^0.5.4",
-    "expo-updates": "~0.18.16"
+    "toast": "^0.5.4"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",

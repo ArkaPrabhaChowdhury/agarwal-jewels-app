@@ -1,7 +1,7 @@
 import { Button, Card, TextField, View } from "react-native-ui-lib";
 import Text from "react-native-ui-lib/text";
 import { commonStyles, theme } from "../styles";
-import { ScrollView, TextInput } from "react-native";
+import { Platform, ScrollView, TextInput } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useState, useEffect, useRef } from "react";
 import { apiURL } from "../../utils";
@@ -19,8 +19,16 @@ const HomeScreen = () => {
   const [loading, setLoading] = useState(true);
   const toastRef = useRef(null);
 
+  const redirectUrl = Platform.select({
+    ios: "agarwaljewelsapp://dashboard",
+    android: "agarwaljewelsapp//:dashboard",
+    default: "agarwaljewelsapp//:dashboard",
+    web: "https://agarwal-jewellers.vercel.app/dashboard",
+  });
+
   useEffect(() => {
     getRate();
+    console.log(redirectUrl)
   }, []);
 
   const getRate = async () => {
@@ -58,6 +66,28 @@ const HomeScreen = () => {
     const id = await AsyncStorage.getItem("userId");
     setClientId(id);
     console.log(id);
+  };
+
+  const handlePurchase = async () => {
+    if (buyAmount == "" || buyGrams == "" || buyAmount == 0 || buyGrams == 0) {
+      showToast("Please enter a valid amount or grams");
+      console.log("Please enter a valid amount or grams");
+      return;
+    }
+    const id = await AsyncStorage.getItem("userId"); // Replace with the actual user ID
+    axios
+      .post(`${apiURL}/upi/create_order/${id}`, {
+        amount: buyAmount,
+        grams: buyGrams,
+        url: redirectUrl,
+      })
+      .then((res) => {
+        console.log(res.data);
+        Linking.openURL(res.data.data.payment_url);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   // const handlePurchase = async () => {
@@ -108,27 +138,6 @@ const HomeScreen = () => {
   //     this.toast.show("Purchase Failed", 2000);
   //   }
   // };
-
-  const handlePurchase = async () => {
-    if (buyAmount == "" || buyGrams == "" || buyAmount == 0 || buyGrams == 0) {
-      showToast("Please enter a valid amount or grams");
-      console.log("Please enter a valid amount or grams");
-      return;
-    }
-    const id = await AsyncStorage.getItem("userId"); // Replace with the actual user ID
-    axios
-      .post(`${apiURL}/upi/create_order/${id}`, {
-        amount: buyAmount,
-        grams: buyGrams,
-      })
-      .then((res) => {
-        console.log(res.data);
-        Linking.openURL(res.data.data.payment_url);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
 
   return (
     <ScrollView>

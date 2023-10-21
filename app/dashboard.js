@@ -50,7 +50,7 @@ const DashboardPage = () => {
 
   const openWhatsapp = () => {
     Linking.openURL(
-      "https://wa.me/917981047462?text=Hi%2C%20I%20have%20a%20query%20regarding%20the%20app."
+      "https://wa.me/919827248783?text=Hi%2C%20I%20have%20a%20query%20regarding%20the%20app."
     );
   }
 
