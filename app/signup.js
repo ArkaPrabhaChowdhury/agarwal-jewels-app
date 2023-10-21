@@ -34,7 +34,13 @@ const RegisterPage = () => {
     } else if (phone === "") {
       toastRef.current.show("Please enter your phone number", 2000);
       return;
-    } 
+    } else if (email.indexOf("@") === -1) {
+      toastRef.current.show("Please enter a valid email", 2000);
+      return;
+    } else if (phone.length !== 10) {
+      toastRef.current.show("Please enter a valid phone number", 2000);
+      return;
+    }
     else{
       
      axios.post(`${apiURL}/users`, {
