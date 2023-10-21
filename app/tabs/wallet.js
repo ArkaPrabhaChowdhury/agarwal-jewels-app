@@ -138,7 +138,7 @@ const WalletScreen = () => {
     const id = await AsyncStorage.getItem("userId");
 
     const user = await axios.get(`${apiURL}/users/${id}`);
-    if(!user.data.kyc_number){
+    if (!user.data.kyc_number) {
       showToast("Please complete your KYC first");
       return;
     }
@@ -258,7 +258,13 @@ const WalletScreen = () => {
                 backgroundColor={theme}
                 onPress={togglePopup}
               />
-              <Popup isVisible={isPopupVisible} text={"This is the address"} onClose={togglePopup} />
+              <Popup
+                isVisible={isPopupVisible}
+                text={
+                  "Agrawal Jewellers, Kagdi Pura, Tilak chowk, Vidisha (M.P) 464001"
+                }
+                onClose={togglePopup}
+              />
             </View>
           )}
           <View
