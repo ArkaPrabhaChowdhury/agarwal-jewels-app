@@ -168,6 +168,7 @@ const HomeScreen = () => {
                 paddingLeft: 12,
               }}
               placeholder="Grams"
+              keyboardType="numeric"
               inputMode="numeric"
               value={buyGrams}
               onChangeText={handleBuyGrams}
@@ -189,6 +190,7 @@ const HomeScreen = () => {
               }}
               placeholder="Amount"
               inputMode="numeric"
+              keyboardType="numeric"
               value={buyAmount}
               onChangeText={handleBuyAmount}
               autoCorrect={false}

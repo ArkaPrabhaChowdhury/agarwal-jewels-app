@@ -10,6 +10,7 @@ import { useFocusEffect, useNavigation } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Loading from "./loading";
 import Toast from "react-native-easy-toast";
+import Popup from "../popup";
 
 const WalletScreen = () => {
   const [isOnline, setIsOnline] = useState(false);
@@ -23,6 +24,7 @@ const WalletScreen = () => {
   const [email, setEmail] = useState("");
   const navigation = useNavigation();
   const toastRef = useRef(null);
+  const [isPopupVisible, setPopupVisible] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -70,8 +72,7 @@ const WalletScreen = () => {
           const newGrams = parseFloat(res.data.grams);
           setGrams(newGrams.toFixed(2));
           setLoading(false);
-        }
-        else{
+        } else {
           setBalance(0);
           setLoading(false);
         }
@@ -83,13 +84,14 @@ const WalletScreen = () => {
 
   const getEmail = async () => {
     const id = await AsyncStorage.getItem("userId");
-    axios.get(`${apiURL}/users/${id}`)
-    .then((res) => {
-      setEmail(res.data.email);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+    axios
+      .get(`${apiURL}/users/${id}`)
+      .then((res) => {
+        setEmail(res.data.email);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const handleSellGrams = (text) => {
@@ -112,15 +114,22 @@ const WalletScreen = () => {
     setIsOnline(!isOnline);
   };
 
-  
+  const togglePopup = () => {
+    setPopupVisible(!isPopupVisible);
+  };
 
   const handleSell = async () => {
-    if (sellAmount == "" || sellGrams == "" || sellAmount == 0 || sellGrams == 0) {
+    if (
+      sellAmount == "" ||
+      sellGrams == "" ||
+      sellAmount == 0 ||
+      sellGrams == 0
+    ) {
       showToast("Please enter a valid amount or grams");
       console.log("Please enter a valid amount or grams");
       return;
     }
-    if(sellAmount > balance || sellGrams > grams){
+    if (sellAmount > balance || sellGrams > grams) {
       showToast("Insufficient funds");
       console.log("Insufficient funds");
       return;
@@ -128,32 +137,30 @@ const WalletScreen = () => {
     const id = await AsyncStorage.getItem("userId");
     let req;
 
-    if(isOnline){
+    if (isOnline) {
       req = {
         clientId: id,
         UPI: upi,
         email: email,
         rate: rate,
         grams: sellGrams,
-        status: false
-      }
-    }
-    else{
+        status: false,
+      };
+    } else {
       req = {
         clientId: id,
         email: email,
         rate: rate,
         grams: sellGrams,
-        status: false
-      }
+        status: false,
+      };
     }
-    try{
+    try {
       const res = axios.post(`${apiURL}/sell`, req);
-      if(res){
+      if (res) {
         showToast("Request sent successfully");
       }
-    }
-    catch (err){
+    } catch (err) {
       console.log("Error in selling gold");
     }
   };
@@ -207,7 +214,13 @@ const WalletScreen = () => {
           </View>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Text text60H>Offline</Text>
-            <Switch value={isOnline} onValueChange={handleToggle} marginV-8 marginH-4/>
+            <Switch
+              onColor={theme}
+              value={isOnline}
+              onValueChange={handleToggle}
+              marginV-8
+              marginH-10
+            />
             <Text text60H>Online</Text>
           </View>
 
@@ -231,10 +244,14 @@ const WalletScreen = () => {
               />
             </View>
           ) : (
-            <Button
-            label="Address"
-            backgroundColor={theme}
-          />
+            <View>
+              <Button
+                label="Address"
+                backgroundColor={theme}
+                onPress={togglePopup}
+              />
+              <Popup isVisible={isPopupVisible} text={"This is the address"} onClose={togglePopup} />
+            </View>
           )}
           <View
             marginT-24
@@ -266,6 +283,7 @@ const WalletScreen = () => {
               }}
               placeholder="Grams"
               inputMode="numeric"
+              keyboardType="numeric"
               value={sellGrams}
               onChangeText={handleSellGrams}
               autoCorrect={false}
@@ -286,6 +304,7 @@ const WalletScreen = () => {
               }}
               placeholder="Amount"
               inputMode="numeric"
+              keyboardType="numeric"
               value={sellAmount}
               onChangeText={handleSellAmount}
               autoCorrect={false}
