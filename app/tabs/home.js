@@ -28,6 +28,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     getRate();
+    console.log(redirectUrl)
   }, []);
 
   const getRate = async () => {

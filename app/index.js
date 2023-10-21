@@ -12,6 +12,7 @@ import { useFocusEffect, useNavigation } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AppIntroSlider from "react-native-app-intro-slider";
 import { Ionicons } from "@expo/vector-icons";
+import { Platform } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 const HomeScreen = () => {
@@ -19,17 +20,19 @@ const HomeScreen = () => {
   const [showSlider, setShowSlider] = useState(false);
   const [appIsReady, setAppIsReady] = useState(false);
 
- useFocusEffect(
+  useFocusEffect(
     useCallback(() => {
       prepareAndCheck();
     }, [])
- )
+  );
 
   async function prepareAndCheck() {
     try {
       const token = await AsyncStorage.getItem("usertoken");
       const introShown = await AsyncStorage.getItem("introShown");
-
+      if (Platform.OS === "web") {
+        navigation.navigate("login");
+      }
       console.log("Token:", token);
       console.log("Intro shown:", introShown);
 
@@ -110,7 +113,7 @@ const HomeScreen = () => {
             <Text
               style={{
                 paddingTop: 12,
-                paddingLeft: 8
+                paddingLeft: 8,
               }}
             >
               Skip
