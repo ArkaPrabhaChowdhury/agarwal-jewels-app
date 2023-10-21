@@ -137,7 +137,11 @@ const WalletScreen = () => {
     }
     const id = await AsyncStorage.getItem("userId");
 
-    
+    const user = await axios.get(`${apiURL}/users/${id}`);
+    if(!user.data.kyc_number){
+      showToast("Please complete your KYC first");
+      return;
+    }
 
     let req;
 
