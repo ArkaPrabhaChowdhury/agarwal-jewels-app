@@ -17,6 +17,7 @@ import NotifcationsScreen from "./tabs/notifications";
 import { Image } from "expo-image";
 import { View } from "react-native-ui-lib";
 import HistoryScreen from "./tabs/history";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Tab = createBottomTabNavigator();
 const DashboardPage = () => {
@@ -45,7 +46,19 @@ const DashboardPage = () => {
         BackHandler.removeEventListener("hardwareBackPress", onBackPress);
     }, [])
   );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      checkToken();
+    }, [])
+  )
   
+  const checkToken = async () => {
+    const token = await AsyncStorage.getItem("userId");
+    if (!token) {
+      navigation.navigate("login");
+    }
+  }
   const navigation = useNavigation();
 
   const openWhatsapp = () => {
