@@ -9,7 +9,7 @@ import {
   Button,
   KeyboardAvoidingView,
 } from "react-native";
-import Toast, { DURATION } from "react-native-easy-toast";
+import Toast from "react-native-toast-message";
 import { Link, SplashScreen, useNavigation } from "expo-router";
 import { commonStyles } from "./styles";
 import { ScrollView } from "react-native";
@@ -53,15 +53,24 @@ const LoginPage = () => {
 
   const onSubmit = (val) => {
     if (val.username === "") {
-      toastRef.current.show("Please enter your email address", 2000);
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter your email address',
+      });
       return;
     } else if (
       !val.username.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)
     ) {
-      toastRef.current.show("You have entered an invalid address", 2000);
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid email address',
+      });
       return;
     } else if (val.password === "") {
-      toastRef.current.show("Please enter your password", 2000);
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter your password',
+      });
       return;
     } else {
       checkCredentials(val.username, val.password).catch((error) => {
@@ -81,10 +90,16 @@ const LoginPage = () => {
       if (response.data.success) {
         // If the response indicates success, navigate to the dashboard
         await AsyncStorage.setItem("userId", response.data.id);
-        showToast("Login successful")
+        Toast.show({
+          type: 'success',
+          text1: 'Login successful!',
+        });
         navigation.navigate("dashboard");
       } else {
-        toastRef.current.show("Invalid Email or Password", 2000);
+        Toast.show({
+          type: 'error',
+          text1: 'Invalid email or password',
+        });
       }
     } catch (error) {
       console.error("Error checking credentials:", error);
@@ -142,7 +157,7 @@ const LoginPage = () => {
           </Text>
         </Text>
       </ScrollView>
-      <Toast ref={toastRef} />
+      <Toast/>
     </KeyboardAvoidingView>
   );
 };

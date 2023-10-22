@@ -12,7 +12,7 @@ import {
 
 import { Link, useNavigation } from "expo-router";
 import { commonStyles } from "./styles";
-import Toast from "react-native-easy-toast";  
+import Toast from "react-native-toast-message";  
 import axios from "axios";
 import { apiURL } from "../utils";
 
@@ -22,23 +22,37 @@ const RegisterPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
-  const toastRef = useRef(null); 
   
   const handleContinue = () => {
     if (email === "") {
-      toastRef.current.show("Please enter your email", 2000);
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter your email address',
+      });
       return;
     } else if (password === "") {
-      toastRef.current.show("Please enter your last name", 2000);
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter your last name',
+      });
       return;
     } else if (phone === "") {
-      toastRef.current.show("Please enter your phone number", 2000);
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter your phone number',
+      });
       return;
     } else if (email.indexOf("@") === -1) {
-      toastRef.current.show("Please enter a valid email", 2000);
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter a valid email',
+      });
       return;
-    } else if (phone.length !== 10) {
-      toastRef.current.show("Please enter a valid phone number", 2000);
+    } else if (phone.length !== 10 || !/^\d+$/.test(phone)) {
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter a valid phone number with 10 digits',
+      });
       return;
     }
     else{
@@ -50,12 +64,26 @@ const RegisterPage = () => {
       })
       .then((response) => {
         console.log(response.data);
-        toastRef.current.show("Account created successfully", 2000);
+        Toast.show({
+          type: 'success',
+          text1: 'Account created successfully!',
+        });
       })
       .catch((error) => {
         if(error.response.status === 401){
           console.log(error.response.data);
-          toastRef.current.show(error.response.data.message, 2000);
+          Toast.show({
+            type: 'error',
+            text1: error.response.data.message,
+          });
+        
+      }
+      else if(error.response.data.message === "User already exists"){
+        console.log(error.response.data);
+        Toast.show({
+          type: 'error',
+          text1: error.response.data.message,
+        });
       }
         else console.log(error);
       });
@@ -106,8 +134,8 @@ const RegisterPage = () => {
             </TouchableOpacity>
           </View>
         </ScrollView>
-      </SafeAreaView>
-      <Toast ref={toastRef} />
+      </SafeAreaView> 
+      <Toast/>
     </KeyboardAvoidingView>
   );
 };
