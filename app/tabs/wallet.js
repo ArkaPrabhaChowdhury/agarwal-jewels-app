@@ -141,7 +141,8 @@ const WalletScreen = () => {
       return;
     }
 
-    if (sellAmount > balance || sellGrams > grams) {
+    if (parseFloat(sellAmount) > parseFloat(balance) || parseFloat(sellGrams) > parseFloat(grams)) {
+      console.log(sellAmount, balance, sellGrams, grams);
       Toast.show({
         type: "error",
         text1: "Insufficient funds",
