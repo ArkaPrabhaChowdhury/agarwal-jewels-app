@@ -13,6 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import AppIntroSlider from "react-native-app-intro-slider";
 import { Ionicons } from "@expo/vector-icons";
 import { Platform } from "react-native";
+import Toast from "react-native-toast-message";
 
 SplashScreen.preventAutoHideAsync();
 const HomeScreen = () => {
@@ -131,6 +132,7 @@ const HomeScreen = () => {
           dotStyle={{ backgroundColor: "gray" }}
           activeDotStyle={{ backgroundColor: "#006b9f" }}
         />
+        <Toast/>
       </View>
     );
   } else {

@@ -6,10 +6,10 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { useState, useEffect, useRef } from "react";
 import { apiURL } from "../../utils";
 import axios from "axios";
-import Toast from "react-native-easy-toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Linking from "expo-linking";
 import Loading from "./loading";
+import Toast from 'react-native-toast-message';
 
 const HomeScreen = () => {
   const [rate, setRate] = useState("0000");
@@ -70,7 +70,10 @@ const HomeScreen = () => {
 
   const handlePurchase = async () => {
     if (buyAmount == "" || buyGrams == "" || buyAmount == 0 || buyGrams == 0) {
-      showToast("Please enter a valid amount or grams");
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter a valid amount or grams',
+      });
       console.log("Please enter a valid amount or grams");
       return;
     }
@@ -236,7 +239,7 @@ const HomeScreen = () => {
           />
         </Card>
       </View>
-      <Toast ref={toastRef} />
+      <Toast/>
     </ScrollView>
   );
 };

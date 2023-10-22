@@ -9,8 +9,8 @@ import { apiURL } from "../../utils";
 import { useFocusEffect, useNavigation } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Loading from "./loading";
-import Toast from "react-native-easy-toast";
 import Popup from "../popup";
+import Toast from "react-native-toast-message";
 
 const WalletScreen = () => {
   const [isOnline, setIsOnline] = useState(false);
@@ -43,7 +43,6 @@ const WalletScreen = () => {
       .then((res) => {
         console.log(res.data[0].goldrate);
         setRate(res.data[0].goldrate);
-        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -64,7 +63,6 @@ const WalletScreen = () => {
         if (res.data.wallet) {
           const newBal = parseFloat(res.data.wallet);
           setBalance(newBal.toFixed(2));
-          setLoading(false);
         } else {
           setBalance(0);
           setLoading(false);
@@ -126,12 +124,28 @@ const WalletScreen = () => {
       sellAmount == 0 ||
       sellGrams == 0
     ) {
-      showToast("Please enter a valid amount or grams");
+      Toast.show({
+        type: "error",
+        text1: "Please enter a valid amount or grams",
+      });
       console.log("Please enter a valid amount or grams");
       return;
     }
+
+    if(!upi && isOnline){
+      Toast.show({
+        type: "error",
+        text1: "Please enter your UPI ID",
+      });
+      console.log("Please enter your UPI ID");
+      return;
+    }
+
     if (sellAmount > balance || sellGrams > grams) {
-      showToast("Insufficient funds");
+      Toast.show({
+        type: "error",
+        text1: "Insufficient funds",
+      });
       console.log("Insufficient funds");
       return;
     }
@@ -139,7 +153,13 @@ const WalletScreen = () => {
 
     const user = await axios.get(`${apiURL}/users/${id}`);
     if (!user.data.kyc_number) {
-      showToast("Please complete your KYC first");
+      Toast.show({
+        type: "error",
+        text1: "Please complete your KYC first here",
+        onPress: () => {
+          navigation.navigate("Profile");
+        },
+      });
       return;
     }
 
@@ -166,7 +186,10 @@ const WalletScreen = () => {
     try {
       const res = axios.post(`${apiURL}/sell`, req);
       if (res) {
-        showToast("Request sent successfully");
+        Toast.show({
+          type: 'success',
+          text1: 'Request sent successfully',
+        });
       }
     } catch (err) {
       console.log("Error in selling gold");
@@ -334,7 +357,7 @@ const WalletScreen = () => {
           />
         </Card>
       </View>
-      <Toast ref={toastRef} />
+      <Toast/>
     </ScrollView>
   );
 };
