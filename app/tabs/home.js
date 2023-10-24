@@ -20,9 +20,9 @@ const HomeScreen = () => {
   const toastRef = useRef(null);
 
   const redirectUrl = Platform.select({
-    ios: "agarwaljewelsapp://dashboard",
-    android: "agarwaljewelsapp//:dashboard",
-    default: "agarwaljewelsapp//:dashboard",
+    ios: "https://agarwal-jewellers.vercel.app/redirect",
+    android: "https://agarwal-jewellers.vercel.app/redirect",
+    default: "https://agarwal-jewellers.vercel.app/redirect",
     web: "https://agarwal-jewellers.vercel.app/dashboard",
   });
 
