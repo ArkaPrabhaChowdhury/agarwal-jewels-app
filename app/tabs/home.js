@@ -9,7 +9,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Linking from "expo-linking";
 import Loading from "./loading";
-import Toast from 'react-native-toast-message';
+import Toast from "react-native-toast-message";
 
 const HomeScreen = () => {
   const [rate, setRate] = useState("0000");
@@ -17,18 +17,19 @@ const HomeScreen = () => {
   const [buyAmount, setBuyAmount] = useState("");
   const [clientId, setClientId] = useState("");
   const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState(true);
   const toastRef = useRef(null);
 
   const redirectUrl = Platform.select({
-    ios: "https://agarwal-jewellers.vercel.app/redirect",
-    android: "https://agarwal-jewellers.vercel.app/redirect",
-    default: "https://agarwal-jewellers.vercel.app/redirect",
+    ios: "agarwaljewelsapp://dashboard",
+    android: "agarwaljewelsapp//:dashboard",
+    default: "agarwaljewelsapp//:dashboard",
     web: "https://agarwal-jewellers.vercel.app/dashboard",
   });
 
   useEffect(() => {
     getRate();
-    console.log(redirectUrl)
+    console.log(redirectUrl);
   }, []);
 
   const getRate = async () => {
@@ -37,6 +38,7 @@ const HomeScreen = () => {
       .then((res) => {
         console.log(res.data[0].goldrate);
         setRate(res.data[0].goldrate);
+        setStatus(res.data[0].status);
         setLoading(false);
       })
       .catch((err) => {
@@ -71,8 +73,8 @@ const HomeScreen = () => {
   const handlePurchase = async () => {
     if (buyAmount == "" || buyGrams == "" || buyAmount == 0 || buyGrams == 0) {
       Toast.show({
-        type: 'error',
-        text1: 'Please enter a valid amount or grams',
+        type: "error",
+        text1: "Please enter a valid amount or grams",
       });
       console.log("Please enter a valid amount or grams");
       return;
@@ -150,21 +152,27 @@ const HomeScreen = () => {
             Buy gold at the best market rate, with ease and trust.
           </Text>
         </View>
-        <Card padding-12>
-          <Text text60BO marginB-8>
-            Current Gold Rate/gm
-          </Text>
+        {status ? (
+          <Card padding-12>
+            <Text text60BO marginB-8>
+              Current Gold Rate/gm
+            </Text>
 
-          {loading ? (
-            <Text center>
-              <Loading />
-            </Text>
-          ) : (
-            <Text text40H color={theme} center>
-              ₹ {rate}
-            </Text>
-          )}
-        </Card>
+            {loading ? (
+              <Text center>
+                <Loading />
+              </Text>
+            ) : (
+              <Text text40H color={theme} center>
+                ₹ {rate}
+              </Text>
+            )}
+          </Card>
+        ) : (
+          <View>
+            
+          </View>
+        )}
 
         <Card flex-1 center marginT-24 paddingH-12 paddingV-24>
           <View>
@@ -239,7 +247,7 @@ const HomeScreen = () => {
           />
         </Card>
       </View>
-      <Toast/>
+      <Toast />
     </ScrollView>
   );
 };
