@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { Button, Text, View } from "react-native-ui-lib";
-import { useFocusEffect, useNavigation } from "expo-router";
+import { useNavigation } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { apiURL } from "../../utils";
@@ -12,11 +12,10 @@ const HistoryScreen = () => {
   const [transfers, setTransfers] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
-  useFocusEffect(
-    React.useCallback(() => {
-      getTransfers();
-    }, [])
-  );
+
+  useEffect(() => {
+    getTransfers();
+  }, []);
 
   const getTransfers = async () => {
     console.log("getting transfers");
@@ -72,74 +71,45 @@ const HistoryScreen = () => {
             Your purchase history
           </Text>
         </View>
-        <ScrollView horizontal>
-          <View style={styles.table}>
-            <View style={styles.row}>
-              <Text style={styles.headingText}>Grams</Text>
-              <Text style={styles.headingTextAmount}>Amount</Text>
-              <Text style={styles.headingText}>Rate</Text>
+        <View style={styles.container}>
+          {transfers.map((transfer, index) => (
+            <View key={index} style={styles.card}>
+              <Text style={styles.label}>Grams: {transfer.grams}</Text>
+              <Text style={styles.label}>Amount: {transfer.amount}</Text>
+              <Text style={styles.label}>Rate: {transfer.amount/transfer.grams}</Text>
+              <Text style={styles.label}>
+              Time: {new Date(transfer.createdAt).toLocaleDateString("en-GB")}
+              </Text>
             </View>
-            {transfers.map((item, index) => {
-              const rate = item.amount / item.grams; // calculate the rate
-              return (
-                <View key={"row-" + index} style={styles.row}>
-                  <Text style={styles.text}>{item?.grams} gms</Text>
-                  <View paddingH-4>
-                    <Text>{item?.amount} ₹</Text>
-                  </View>
-                  <View marginL-23>
-                    <Text style={styles.text}>{rate.toFixed(2)} ₹/gm</Text>
-                  </View>
-                </View>
-              );
-            })}
-          </View>
-        </ScrollView>
+          ))}
+        </View>
       </View>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  table: {
-    flex: 1,
-    flexDirection: "column",
+  container: {
+    paddingHorizontal: 10,
+    paddingBottom: 20,
+  },
+  card: {
     backgroundColor: "#fff",
     borderRadius: 10,
-    padding: 30,
+    padding: 20,
     margin: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderBottomWidth: 1,
-    borderColor: "#C1C0B9",
-    paddingVertical: 10,
-  },
-  text: {
-    flex: 2,
-    textAlign: "center",
-    marginRight: 22,
-  },
-  headingText: {
-    fontSize: 14,
-    flex: 1,
-    textAlign: "center",
+  label: {
     fontWeight: "bold",
-    marginRight: 28,
-  },
-  headingTextAmount: {
-    fontSize: 14,
-    flex: 1,
-    textAlign: "center",
-    fontWeight: "bold",
-    marginRight: 20,
-  },
-  textAmount: {
-    flex: 2,
-    textAlign: "center",
-    marginHorizontal: 48,
+    marginBottom: 5,
   },
 });
 
