@@ -90,10 +90,7 @@ const LoginPage = () => {
         });
         navigation.navigate("dashboard");
       } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Invalid email or password',
-        });
+        toastRef.current.show("Invalid Phone Number or Password", 2000);
       }
     } catch (error) {
       console.error("Error checking credentials:", error);
