@@ -53,12 +53,12 @@ const LoginPage = () => {
 
   const onSubmit = (val) => {
     if (val.username === "") {
-      toastRef.current.show("Please enter your email address", 2000);
+      toastRef.current.show("Please enter your Phone Number", 2000);
       return;
     } else if (
-      !val.username.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)
+      val.username.length !== 10
     ) {
-      toastRef.current.show("You have entered an invalid address", 2000);
+      toastRef.current.show("You have entered an invalid Phone", 2000);
       return;
     } else if (val.password === "") {
       toastRef.current.show("Please enter your password", 2000);
@@ -101,7 +101,7 @@ const LoginPage = () => {
         <Text style={commonStyles.text}>Welcome back!</Text>
         <TextInput
           style={commonStyles.input}
-          placeholder="Email"
+          placeholder="Phone"
           placeholderTextColor={"black"}
           value={username}
           onChangeText={setUsername}

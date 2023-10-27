@@ -25,10 +25,11 @@ const RegisterPage = () => {
   const toastRef = useRef(null); 
   
   const handleContinue = () => {
-    if (email === "") {
-      toastRef.current.show("Please enter your email", 2000);
-      return;
-    } else if (password === "") {
+    // if (email === "") {
+    //   toastRef.current.show("Please enter your email", 2000);
+    //   return;
+    // } else 
+     if (password === "") {
       toastRef.current.show("Please enter your last name", 2000);
       return;
     } else if (phone === "") {
@@ -38,7 +39,7 @@ const RegisterPage = () => {
     else{
       
      axios.post(`${apiURL}/users`, {
-        email : email,
+       // email : email,
         password : password,
         phonenumber : phone,
       })
@@ -69,12 +70,19 @@ const RegisterPage = () => {
       <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.container}>
           <Text style={commonStyles.text}>Create an Account</Text>
-          <TextInput
+          {/* <TextInput
             style={styles.input}
             placeholder="Email"
             placeholderTextColor={"black"}
             onChangeText={(text) => setEmail(text)}
             value={email}
+          /> */}
+          <TextInput
+            style={styles.input}
+            placeholder="Phone number"
+            placeholderTextColor={"black"}
+            onChangeText={(text) => setPhone(text)}
+            value={phone}
           />
           <TextInput
             style={styles.input}
@@ -83,13 +91,7 @@ const RegisterPage = () => {
             onChangeText={(text) => setPassword(text)}
             value={password}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Phone number"
-            placeholderTextColor={"black"}
-            onChangeText={(text) => setPhone(text)}
-            value={phone}
-          />
+
           <TouchableOpacity style={styles.button} onPress={handleContinue}>
             <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
