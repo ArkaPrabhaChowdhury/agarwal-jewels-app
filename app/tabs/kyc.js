@@ -10,6 +10,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "expo-router";
+import Toast from "react-native-toast-message";
 
 const kycScreen = () => {
   //FrontEnd Image Uploading for client
@@ -77,10 +78,16 @@ const kycScreen = () => {
       const response = await axios.patch(apiUrl, imageData);
 
       console.log("Image uploaded successfully:", response.data);
-      this.toast.show("Image uploaded successfully!");
+      Toast.show({
+        type: 'success',
+        text1: 'Image uploaded successfully',
+      });
     } catch (error) {
       console.error("Error uploading image:", error);
-      this.toast.show("Error uploading image. Please try again.");
+      Toast.show({
+        type: 'error',
+        text1: 'Error uploading image',
+      });
     }
   };
 
@@ -135,6 +142,7 @@ const kycScreen = () => {
           />
         </View>
       </View>
+      <Toast/>
     </View>
   );
 };

@@ -1,6 +1,7 @@
 {
   "expo": {
-    "scheme": "acme",
+    "scheme": "agarwaljewelsapp",
+    "icon": "./app/assets/logo_theme.png",
     "web": {
       "bundler": "metro"
     },
@@ -24,7 +25,17 @@
       }
     },
     "android": {
-      "package": "com.arka24.agarwaljewelsapp"
-    }
+      "package": "com.arka24.agarwaljewelsapp",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/db4abee6-a9dd-4524-b0a9-8d28e64228f8"
+    },
+    "ios": {}
   }
 }

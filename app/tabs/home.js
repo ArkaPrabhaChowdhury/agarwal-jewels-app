@@ -1,7 +1,7 @@
 import { Button, Card, TextField, View } from "react-native-ui-lib";
 import Text from "react-native-ui-lib/text";
 import { commonStyles, theme } from "../styles";
-import { ScrollView, TextInput } from "react-native";
+import { Platform, ScrollView, TextInput } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useState, useEffect, useRef } from "react";
 import { apiURL } from "../../utils";
@@ -9,7 +9,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Linking from "expo-linking";
 import Loading from "./loading";
-import Toast from "react-native-easy-toast";
+import Toast from "react-native-toast-message";
 
 const HomeScreen = () => {
   const [rate, setRate] = useState("0000");
@@ -17,10 +17,19 @@ const HomeScreen = () => {
   const [buyAmount, setBuyAmount] = useState("");
   const [clientId, setClientId] = useState("");
   const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState(true);
   const toastRef = useRef(null);
+
+  const redirectUrl = Platform.select({
+    ios: "agarwaljewelsapp://dashboard",
+    android: "agarwaljewelsapp//:dashboard",
+    default: "agarwaljewelsapp//:dashboard",
+    web: "https://agarwal-jewellers.vercel.app/dashboard",
+  });
 
   useEffect(() => {
     getRate();
+    console.log(redirectUrl);
   }, []);
 
   const getRate = async () => {
@@ -29,6 +38,7 @@ const HomeScreen = () => {
       .then((res) => {
         console.log(res.data[0].goldrate);
         setRate(res.data[0].goldrate);
+        setStatus(res.data[0].status);
         setLoading(false);
       })
       .catch((err) => {
@@ -61,70 +71,78 @@ const HomeScreen = () => {
   };
 
   const handlePurchase = async () => {
-    showToast("Wallet updated successfully");
-    try {
-      const id = await AsyncStorage.getItem("userId"); // Replace with the actual user ID
-      const response = axios.patch(`${apiURL}/transfers/wallet/${id}`, {
-        purchased: buyAmount,
-        action: "+",
+    if (buyAmount == "" || buyGrams == "" || buyAmount == 0 || buyGrams == 0) {
+      Toast.show({
+        type: "error",
+        text1: "Please enter a valid amount or grams",
       });
-     axios.post(`${apiURL}/transfers/create`, {
-        clientId: id,
-        grams: buyGrams,
-        amount: buyAmount,
-      }).then((res) => {
-
-
-        var data = JSON.stringify({
-          "key": "109edfed-6ff4-4fe0-b3f9-6673a509e368",
-          "client_txn_id": `${res.data._id}`,
-          "amount": `${buyAmount}`,
-          "p_info": "Gold",
-          "customer_name": "New User",
-          "customer_email": "jondoe@gmail.com",
-          "customer_mobile": "9876543210",
-          "redirect_url": "http://google.com",
-          "udf1": "user defined field 1",
-          "udf2": "user defined field 2",
-          "udf3": "user defined field 3"
-        });
-        
-        var config = {
-          method: 'post',
-        maxBodyLength: Infinity,
-          url: 'https://api.ekqr.in/api/create_order',
-          headers: { 
-            'Content-Type': 'application/json'
-          },
-          data : data
-        };
-        
-        axios(config)
-        .then(function (response) {
-          console.log(JSON.stringify(response.data));
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-
-        console.log(res.data);
-
-      }).catch((err) => {console.log(err)});
-      
-      console.log("Wallet updated successfully");
-    } catch (error) {
-      console.error("Error: ", error);
+      console.log("Please enter a valid amount or grams");
+      return;
     }
+    const id = await AsyncStorage.getItem("userId"); // Replace with the actual user ID
+    axios
+      .post(`${apiURL}/upi/create_order/${id}`, {
+        amount: buyAmount,
+        grams: buyGrams,
+        url: redirectUrl,
+      })
+      .then((res) => {
+        console.log(res.data);
+        Linking.openURL(res.data.data.payment_url);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
+  // const handlePurchase = async () => {
+  //   if (buyAmount == "" || buyGrams == "" || buyAmount == 0 || buyGrams == 0) {
+  //     showToast("Please enter a valid amount or grams");
+  //     console.log("Please enter a valid amount or grams");
+  //     return;
+  //   }
 
-  //
-  const handleUPI = async () => {
+  //   try {
+  //     const id = await AsyncStorage.getItem("userId"); // Replace with the actual user ID
+  //     const response = axios.patch(`${apiURL}/transfers/wallet/${id}`, {
+  //       purchased: buyAmount,
+  //       action: "+",
+  //     });
+  //     const gres = axios.patch(`${apiURL}/transfers/grams/${id}`, {
+  //       grams: buyGrams,
+  //       action: "+",
+  //     });
+  //     axios
+  //       .post(`${apiURL}/transfers/create`, {
+  //         clientId: id,
+  //         grams: buyGrams,
+  //         amount: buyAmount,
+  //       })
+  //       .then((res) => {
+  //         console.log(res.data.id);
+  //         axios
+  //           .post(`${apiURL}/upi/create_order/${id}`, {
+  //             transferId: res.data.id,
+  //             amount: buyAmount,
+  //           })
+  //           .then((res) => {
+  //             console.log(res.data);
+  //             Linking.openURL(res.data.data.payment_url);
+  //           })
+  //           .catch((err) => {
+  //             console.log(err);
+  //           });
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
 
-      
-
- 
-  };
+  //     console.log("Wallet updated successfully");
+  //   } catch (error) {
+  //     console.error("Error: ", error);
+  //     this.toast.show("Purchase Failed", 2000);
+  //   }
+  // };
 
   return (
     <ScrollView>
@@ -134,21 +152,27 @@ const HomeScreen = () => {
             Buy gold at the best market rate, with ease and trust.
           </Text>
         </View>
-        <Card padding-12>
-          <Text text60BO marginB-8>
-            Current Gold Rate/gm
-          </Text>
+        {status ? (
+          <Card padding-12>
+            <Text text60BO marginB-8>
+              Current Gold Rate/gm
+            </Text>
 
-          {loading ? (
-            <Text center>
-              <Loading />
-            </Text>
-          ) : (
-            <Text text40H color={theme} center>
-              ₹ {rate}
-            </Text>
-          )}
-        </Card>
+            {loading ? (
+              <Text center>
+                <Loading />
+              </Text>
+            ) : (
+              <Text text40H color={theme} center>
+                ₹ {rate}
+              </Text>
+            )}
+          </Card>
+        ) : (
+          <View>
+            
+          </View>
+        )}
 
         <Card flex-1 center marginT-24 paddingH-12 paddingV-24>
           <View>
@@ -185,6 +209,7 @@ const HomeScreen = () => {
                 paddingLeft: 12,
               }}
               placeholder="Grams"
+              keyboardType="numeric"
               inputMode="numeric"
               value={buyGrams}
               onChangeText={handleBuyGrams}
@@ -206,6 +231,7 @@ const HomeScreen = () => {
               }}
               placeholder="Amount"
               inputMode="numeric"
+              keyboardType="numeric"
               value={buyAmount}
               onChangeText={handleBuyAmount}
               autoCorrect={false}
@@ -221,7 +247,7 @@ const HomeScreen = () => {
           />
         </Card>
       </View>
-      <Toast ref={toastRef} />
+      <Toast />
     </ScrollView>
   );
 };

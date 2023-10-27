@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, Card, Text, View } from "react-native-ui-lib";
+import React, { useRef, useState } from "react";
+import { Button, Card, Text, View, Switch } from "react-native-ui-lib";
 import { theme } from "../styles";
 import { ScrollView, TextInput } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -9,17 +9,27 @@ import { apiURL } from "../../utils";
 import { useFocusEffect, useNavigation } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Loading from "./loading";
+import Popup from "../popup";
+import Toast from "react-native-toast-message";
+
 const WalletScreen = () => {
-  const [balance, setBalance] = useState(0);
+  const [isOnline, setIsOnline] = useState(false);
+  const [upi, setUpi] = useState("");
+  const [balance, setBalance] = useState("");
+  const [grams, setGrams] = useState("");
   const [sellGrams, setSellGrams] = useState("");
   const [sellAmount, setSellAmount] = useState("");
   const [rate, setRate] = React.useState(0);
   const [loading, setLoading] = useState(true);
+  const [email, setEmail] = useState("");
   const navigation = useNavigation();
+  const toastRef = useRef(null);
+  const [isPopupVisible, setPopupVisible] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
       fetchWallet();
+      getEmail();
     }, [])
   );
 
@@ -39,6 +49,12 @@ const WalletScreen = () => {
       });
   };
 
+  const showToast = (message) => {
+    if (toastRef.current) {
+      toastRef.current.show(message, 2000);
+    }
+  };
+
   const fetchWallet = async () => {
     const id = await AsyncStorage.getItem("userId");
     axios
@@ -47,8 +63,30 @@ const WalletScreen = () => {
         if (res.data.wallet) {
           const newBal = parseFloat(res.data.wallet);
           setBalance(newBal.toFixed(2));
+        } else {
+          setBalance(0);
           setLoading(false);
         }
+        if (res.data.grams) {
+          const newGrams = parseFloat(res.data.grams);
+          setGrams(newGrams.toFixed(2));
+          setLoading(false);
+        } else {
+          setGrams(0);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const getEmail = async () => {
+    const id = await AsyncStorage.getItem("userId");
+    axios
+      .get(`${apiURL}/users/${id}`)
+      .then((res) => {
+        setEmail(res.data.email);
       })
       .catch((err) => {
         console.log(err);
@@ -67,17 +105,113 @@ const WalletScreen = () => {
     setSellGrams(convertedAmount.toFixed(2));
   };
 
-  const handleSell = async () => {};
+  const handleUpi = (text) => {
+    setUpi(text);
+  };
+
+  const handleToggle = () => {
+    setIsOnline(!isOnline);
+  };
+
+  const togglePopup = () => {
+    setPopupVisible(!isPopupVisible);
+  };
+
+  const handleSell = async () => {
+    if (
+      sellAmount == "" ||
+      sellGrams == "" ||
+      sellAmount == 0 ||
+      sellGrams == 0
+    ) {
+      Toast.show({
+        type: "error",
+        text1: "Please enter a valid amount or grams",
+      });
+      console.log("Please enter a valid amount or grams");
+      return;
+    }
+
+    if(!upi && isOnline){
+      Toast.show({
+        type: "error",
+        text1: "Please enter your UPI ID",
+      });
+      console.log("Please enter your UPI ID");
+      return;
+    }
+
+    if (parseFloat(sellAmount) > parseFloat(balance) || parseFloat(sellGrams) > parseFloat(grams)) {
+      console.log(sellAmount, balance, sellGrams, grams);
+      Toast.show({
+        type: "error",
+        text1: "Insufficient funds",
+      });
+      console.log("Insufficient funds");
+      return;
+    }
+    const id = await AsyncStorage.getItem("userId");
+
+    const user = await axios.get(`${apiURL}/users/${id}`);
+    if (!user.data.kyc_number) {
+      Toast.show({
+        type: "error",
+        text1: "Please complete your KYC first here",
+        onPress: () => {
+          navigation.navigate("Profile");
+        },
+      });
+      return;
+    }
+
+    let req;
+
+    if (isOnline) {
+      req = {
+        clientId: id,
+        UPI: upi,
+        email: email,
+        rate: rate,
+        grams: sellGrams,
+        status: false,
+      };
+    } else {
+      req = {
+        clientId: id,
+        email: email,
+        rate: rate,
+        grams: sellGrams,
+        status: false,
+      };
+    }
+    try {
+      const res = axios.post(`${apiURL}/sell`, req);
+      if (res) {
+        Toast.show({
+          type: 'success',
+          text1: 'Request sent successfully',
+        });
+      }
+    } catch (err) {
+      console.log("Error in selling gold");
+    }
+  };
 
   return (
     <ScrollView flex-1 center>
       <View center>
-        <Card padding-12 center marginT-24 marginH-18 style={{
-          width: Platform.select({
-            web:300,
-            default:"full"
-          })
-        }}>
+        <Card
+          padding-12
+          center
+          marginT-24
+          marginH-18
+          style={{
+            width: Platform.select({
+              web: 300,
+              default: "full",
+            }),
+          }}
+        >
           <Text text60BO marginB-8>
             Wallet Balance
           </Text>
@@ -86,8 +220,9 @@ const WalletScreen = () => {
               <Loading />
             </Text>
           ) : (
-            <Text text40H color={theme}>
-              {balance} ₹
+            <Text text40H center color={theme}>
+              ₹ {balance} {"\n"}
+              {grams} grams
             </Text>
           )}
         </Card>
@@ -109,6 +244,53 @@ const WalletScreen = () => {
               Quick sell
             </Text>
           </View>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text text60H>Offline</Text>
+            <Switch
+              onColor={theme}
+              value={isOnline}
+              onValueChange={handleToggle}
+              marginV-8
+              marginH-10
+            />
+            <Text text60H>Online</Text>
+          </View>
+
+          {isOnline ? (
+            <View>
+              <TextInput
+                style={{
+                  width: 240,
+                  height: 50,
+                  borderRadius: 5,
+                  backgroundColor: "#f1f1f1",
+                  paddingLeft: 12,
+                }}
+                placeholder="UPI ID"
+                inputMode="text"
+                value={upi}
+                onChangeText={handleUpi}
+                autoCorrect={false}
+                autoComplete="off"
+                spellCheck={false}
+              />
+            </View>
+          ) : (
+            <View>
+              <Button
+                label="Address"
+                backgroundColor={theme}
+                onPress={togglePopup}
+              />
+              <Popup
+                isVisible={isPopupVisible}
+                text={
+                  "Agrawal Jewellers, Kagdi Pura, Tilak chowk, Vidisha (M.P) 464001"
+                }
+                onClose={togglePopup}
+              />
+            </View>
+          )}
           <View
             marginT-24
             style={{
@@ -139,6 +321,7 @@ const WalletScreen = () => {
               }}
               placeholder="Grams"
               inputMode="numeric"
+              keyboardType="numeric"
               value={sellGrams}
               onChangeText={handleSellGrams}
               autoCorrect={false}
@@ -159,6 +342,7 @@ const WalletScreen = () => {
               }}
               placeholder="Amount"
               inputMode="numeric"
+              keyboardType="numeric"
               value={sellAmount}
               onChangeText={handleSellAmount}
               autoCorrect={false}
@@ -174,6 +358,7 @@ const WalletScreen = () => {
           />
         </Card>
       </View>
+      <Toast/>
     </ScrollView>
   );
 };
