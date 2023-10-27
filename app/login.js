@@ -58,7 +58,7 @@ const LoginPage = () => {
     } else if (
       val.username.length !== 10
     ) {
-      toastRef.current.show("You have entered an invalid Phone", 2000);
+      toastRef.current.show("You have entered an invalid Phone Number", 2000);
       return;
     } else if (val.password === "") {
       toastRef.current.show("Please enter your password", 2000);

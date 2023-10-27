@@ -30,7 +30,7 @@ const RegisterPage = () => {
     //   return;
     // } else 
      if (password === "") {
-      toastRef.current.show("Please enter your last name", 2000);
+      toastRef.current.show("Please enter your Password ", 2000);
       return;
     } else if (phone === "") {
       toastRef.current.show("Please enter your phone number", 2000);
