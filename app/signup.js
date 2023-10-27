@@ -24,10 +24,10 @@ const RegisterPage = () => {
   const [phone, setPhone] = useState("");
   
   const handleContinue = () => {
-    // if (email === "") {
-    //   toastRef.current.show("Please enter your email", 2000);
-    //   return;
-    // } else 
+     if (email === "") {
+       toastRef.current.show("Please enter your Name", 2000);
+       return;
+     } else 
      if (password === "") {
       toastRef.current.show("Please enter your Password ", 2000);
       return;
@@ -37,13 +37,8 @@ const RegisterPage = () => {
         text1: 'Please enter your phone number',
       });
       return;
-    } else if (email.indexOf("@") === -1) {
-      Toast.show({
-        type: 'error',
-        text1: 'Please enter a valid email',
-      });
-      return;
-    } else if (phone.length !== 10 || !/^\d+$/.test(phone)) {
+    } 
+    else if (phone.length !== 10 || !/^\d+$/.test(phone)) {
       Toast.show({
         type: 'error',
         text1: 'Please enter a valid phone number with 10 digits',
@@ -51,9 +46,9 @@ const RegisterPage = () => {
       return;
     }
     else{
-      
+      console.log(phone , password);
      axios.post(`${apiURL}/users`, {
-       // email : email,
+        email : email,
         password : password,
         phonenumber : phone,
       })
@@ -98,13 +93,13 @@ const RegisterPage = () => {
       <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.container}>
           <Text style={commonStyles.text}>Create an Account</Text>
-          {/* <TextInput
+           <TextInput
             style={styles.input}
-            placeholder="Email"
+            placeholder="Name"
             placeholderTextColor={"black"}
             onChangeText={(text) => setEmail(text)}
             value={email}
-          /> */}
+          /> 
           <TextInput
             style={styles.input}
             placeholder="Phone number"
