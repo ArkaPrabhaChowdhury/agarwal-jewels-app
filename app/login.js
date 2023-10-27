@@ -53,18 +53,12 @@ const LoginPage = () => {
 
   const onSubmit = (val) => {
     if (val.username === "") {
-      Toast.show({
-        type: 'error',
-        text1: 'Please enter your email address',
-      });
+      toastRef.current.show("Please enter your Phone Number", 2000);
       return;
     } else if (
-      !val.username.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)
+      val.username.length !== 10
     ) {
-      Toast.show({
-        type: 'error',
-        text1: 'Invalid email address',
-      });
+      toastRef.current.show("You have entered an invalid Phone Number", 2000);
       return;
     } else if (val.password === "") {
       Toast.show({
@@ -96,10 +90,7 @@ const LoginPage = () => {
         });
         navigation.navigate("dashboard");
       } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Invalid email or password',
-        });
+        toastRef.current.show("Invalid Phone Number or Password", 2000);
       }
     } catch (error) {
       console.error("Error checking credentials:", error);
@@ -116,7 +107,7 @@ const LoginPage = () => {
         <Text style={commonStyles.text}>Welcome back!</Text>
         <TextInput
           style={commonStyles.input}
-          placeholder="Email"
+          placeholder="Phone"
           placeholderTextColor={"black"}
           value={username}
           onChangeText={setUsername}

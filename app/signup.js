@@ -24,17 +24,12 @@ const RegisterPage = () => {
   const [phone, setPhone] = useState("");
   
   const handleContinue = () => {
-    if (email === "") {
-      Toast.show({
-        type: 'error',
-        text1: 'Please enter your email address',
-      });
-      return;
-    } else if (password === "") {
-      Toast.show({
-        type: 'error',
-        text1: 'Please enter your last name',
-      });
+     if (email === "") {
+       toastRef.current.show("Please enter your Name", 2000);
+       return;
+     } else 
+     if (password === "") {
+      toastRef.current.show("Please enter your Password ", 2000);
       return;
     } else if (phone === "") {
       Toast.show({
@@ -42,13 +37,8 @@ const RegisterPage = () => {
         text1: 'Please enter your phone number',
       });
       return;
-    } else if (email.indexOf("@") === -1) {
-      Toast.show({
-        type: 'error',
-        text1: 'Please enter a valid email',
-      });
-      return;
-    } else if (phone.length !== 10 || !/^\d+$/.test(phone)) {
+    } 
+    else if (phone.length !== 10 || !/^\d+$/.test(phone)) {
       Toast.show({
         type: 'error',
         text1: 'Please enter a valid phone number with 10 digits',
@@ -56,7 +46,7 @@ const RegisterPage = () => {
       return;
     }
     else{
-      
+      console.log(phone , password);
      axios.post(`${apiURL}/users`, {
         email : email,
         password : password,
@@ -103,12 +93,19 @@ const RegisterPage = () => {
       <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.container}>
           <Text style={commonStyles.text}>Create an Account</Text>
-          <TextInput
+           <TextInput
             style={styles.input}
-            placeholder="Email"
+            placeholder="Name"
             placeholderTextColor={"black"}
             onChangeText={(text) => setEmail(text)}
             value={email}
+          /> 
+          <TextInput
+            style={styles.input}
+            placeholder="Phone number"
+            placeholderTextColor={"black"}
+            onChangeText={(text) => setPhone(text)}
+            value={phone}
           />
           <TextInput
             style={styles.input}
@@ -117,13 +114,7 @@ const RegisterPage = () => {
             onChangeText={(text) => setPassword(text)}
             value={password}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Phone number"
-            placeholderTextColor={"black"}
-            onChangeText={(text) => setPhone(text)}
-            value={phone}
-          />
+
           <TouchableOpacity style={styles.button} onPress={handleContinue}>
             <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
