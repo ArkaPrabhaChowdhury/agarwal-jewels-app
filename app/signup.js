@@ -25,11 +25,17 @@ const RegisterPage = () => {
   
   const handleContinue = () => {
      if (email === "") {
-       toastRef.current.show("Please enter your Name", 2000);
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter your name',
+      });
        return;
-     } else 
-     if (password === "") {
-      toastRef.current.show("Please enter your Password ", 2000);
+     } 
+     else if (password === "") {
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter your password',
+      });
       return;
     } else if (phone === "") {
       Toast.show({

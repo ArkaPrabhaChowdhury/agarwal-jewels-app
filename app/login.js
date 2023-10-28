@@ -53,12 +53,18 @@ const LoginPage = () => {
 
   const onSubmit = (val) => {
     if (val.username === "") {
-      toastRef.current.show("Please enter your Phone Number", 2000);
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter your phone number',
+      });
       return;
     } else if (
       val.username.length !== 10
     ) {
-      toastRef.current.show("You have entered an invalid Phone Number", 2000);
+      Toast.show({
+        type: 'error',
+        text1: 'You have entered invalid phone number',
+      });
       return;
     } else if (val.password === "") {
       Toast.show({
@@ -90,7 +96,10 @@ const LoginPage = () => {
         });
         navigation.navigate("dashboard");
       } else {
-        toastRef.current.show("Invalid Phone Number or Password", 2000);
+        Toast.show({
+          type: 'error',
+          text1: 'Invalid phone number or password',
+        });
       }
     } catch (error) {
       console.error("Error checking credentials:", error);
