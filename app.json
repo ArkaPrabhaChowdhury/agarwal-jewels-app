@@ -3,7 +3,8 @@
     "scheme": "agarwaljewelsapp",
     "icon": "./app/assets/logo_theme.png",
     "web": {
-      "bundler": "metro"
+      "bundler": "metro",
+      "favicon": "./app/assets/big_logo.png"
     },
     "plugins": [
       "expo-router",
@@ -12,17 +13,24 @@
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
+      ],
+      [
+        "onesignal-expo-plugin",
+        {
+          "mode": "development"
+        }
       ]
     ],
-    "name": "agarwal-jewels-app",
-    "slug": "agarwal-jewels-app",
+    "name": "Agrawal Jewels",
+    "slug": "Agrawal Jewels",
     "extra": {
       "router": {
         "origin": false
       },
       "eas": {
         "projectId": "db4abee6-a9dd-4524-b0a9-8d28e64228f8"
-      }
+      },
+      "oneSignalAppId": "40efcbe8-49c3-461f-95fb-a47c9e53fef6"
     },
     "android": {
       "package": "com.arka24.agarwaljewelsapp",
@@ -36,6 +44,8 @@
     "updates": {
       "url": "https://u.expo.dev/db4abee6-a9dd-4524-b0a9-8d28e64228f8"
     },
-    "ios": {}
+    "ios": {
+      "bundleIdentifier": "com.arka24.agarwaljewelsapp"
+    }
   }
 }
