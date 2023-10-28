@@ -61,7 +61,7 @@ const HomeScreen = () => {
   const handleBuyAmount = (text) => {
     setBuyAmount(text);
     const convertedAmount = text ? parseFloat(text) / rate : 0; // Set to 0 if empty
-    setBuyGrams(convertedAmount.toFixed(2));
+    setBuyGrams(convertedAmount.toFixed(4));
   };
 
   const getId = async () => {
