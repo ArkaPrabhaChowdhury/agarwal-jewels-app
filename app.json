@@ -3,7 +3,8 @@
     "scheme": "agarwaljewelsapp",
     "icon": "./app/assets/logo_theme.png",
     "web": {
-      "bundler": "metro"
+      "bundler": "metro",
+      "favicon": "./app/assets/big_logo.png"
     },
     "plugins": [
       "expo-router",
@@ -20,8 +21,8 @@
         }
       ]
     ],
-    "name": "agarwal-jewels-app",
-    "slug": "agarwal-jewels-app",
+    "name": "Agrawal Jewels",
+    "slug": "Agrawal Jewels",
     "extra": {
       "router": {
         "origin": false
