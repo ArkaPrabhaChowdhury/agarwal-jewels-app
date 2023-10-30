@@ -14,6 +14,7 @@ import Toast from "react-native-toast-message";
 
 const WalletScreen = () => {
   const [isOnline, setIsOnline] = useState(false);
+  const [isNeeded, setIsNeeded] = useState(true);
   const [upi, setUpi] = useState("");
   const [balance, setBalance] = useState("");
   const [grams, setGrams] = useState("");
@@ -22,7 +23,7 @@ const WalletScreen = () => {
   const [rate, setRate] = React.useState(0);
   const [sellRate, setSellRate] = React.useState(0);
   const [loading, setLoading] = useState(true);
-  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const navigation = useNavigation();
   const toastRef = useRef(null);
   const [isPopupVisible, setPopupVisible] = useState(false);
@@ -30,7 +31,7 @@ const WalletScreen = () => {
   useFocusEffect(
     React.useCallback(() => {
       fetchWallet();
-      getEmail();
+      getPhone();
     }, [])
   );
 
@@ -83,12 +84,12 @@ const WalletScreen = () => {
       });
   };
 
-  const getEmail = async () => {
+  const getPhone = async () => {
     const id = await AsyncStorage.getItem("userId");
     axios
       .get(`${apiURL}/users/${id}`)
       .then((res) => {
-        setEmail(res.data.email);
+        setPhone(res.data.phonenumber);
       })
       .catch((err) => {
         console.log(err);
@@ -134,16 +135,10 @@ const WalletScreen = () => {
       return;
     }
 
-    if(!upi && isOnline){
-      Toast.show({
-        type: "error",
-        text1: "Please enter your UPI ID",
-      });
-      console.log("Please enter your UPI ID");
-      return;
-    }
-
-    if (parseFloat(sellAmount) > parseFloat(balance) || parseFloat(sellGrams) > parseFloat(grams)) {
+    if (
+      parseFloat(sellAmount) > parseFloat(balance) ||
+      parseFloat(sellGrams) > parseFloat(grams)
+    ) {
       console.log(sellAmount, balance, sellGrams, grams);
       Toast.show({
         type: "error",
@@ -172,17 +167,19 @@ const WalletScreen = () => {
       req = {
         clientId: id,
         UPI: upi,
-        email: email,
-        rate: rate,
+        phonenumber: phone,
+        rate: sellRate,
         grams: sellGrams,
+        isOnline: isOnline,
         status: false,
       };
     } else {
       req = {
         clientId: id,
-        email: email,
-        rate: rate,
+        phonenumber: phone,
+        rate: sellRate,
         grams: sellGrams,
+        isOnline: isOnline,
         status: false,
       };
     }
@@ -190,8 +187,8 @@ const WalletScreen = () => {
       const res = axios.post(`${apiURL}/sell`, req);
       if (res) {
         Toast.show({
-          type: 'success',
-          text1: 'Request sent successfully',
+          type: "success",
+          text1: "Request sent successfully",
         });
       }
     } catch (err) {
@@ -268,7 +265,7 @@ const WalletScreen = () => {
                   backgroundColor: "#f1f1f1",
                   paddingLeft: 12,
                 }}
-                placeholder="UPI ID"
+                placeholder="UPI ID (Optional)"
                 inputMode="text"
                 value={upi}
                 onChangeText={handleUpi}
@@ -361,7 +358,7 @@ const WalletScreen = () => {
           />
         </Card>
       </View>
-      <Toast/>
+      <Toast />
     </ScrollView>
   );
 };
