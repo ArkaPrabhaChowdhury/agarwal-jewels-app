@@ -15,13 +15,33 @@ import { Ionicons } from "@expo/vector-icons";
 import { Platform } from "react-native";
 import Toast from "react-native-toast-message";
 
+
+  // Add the OneSignal import here
+  // import { LogLevel, OneSignal } from 'react-native-onesignal';
+  // import Constants from "expo-constants";
+
   import Constants from "expo-constants";
+
 
 SplashScreen.preventAutoHideAsync();
 const HomeScreen = () => {
   const navigation = useNavigation();
   const [showSlider, setShowSlider] = useState(false);
   const [appIsReady, setAppIsReady] = useState(false);
+
+
+
+  //One signal thingy
+  useEffect(() => {
+    // Set the log level
+    // OneSignal.Debug.setLogLevel(LogLevel.Verbose);
+    // Initialize OneSignal with your OneSignal app ID
+    // OneSignal.initialize(Constants.expoConfig.extra.oneSignalAppId);
+    // Request notification permissions
+    // OneSignal.Notifications.requestPermission(true);
+    
+    prepareAndCheck();
+  }, []);
 
 
 

@@ -19,6 +19,9 @@ import { View } from "react-native-ui-lib";
 import HistoryScreen from "./tabs/history";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+ import { LogLevel, OneSignal } from 'react-native-onesignal';
+ import Constants from "expo-constants";
+
 const Tab = createBottomTabNavigator();
 const DashboardPage = () => {
   const windowHeight = Dimensions.get("window").height;
@@ -47,11 +50,28 @@ const DashboardPage = () => {
     }, [])
   );
 
+  
   useFocusEffect(
     React.useCallback(() => {
+      const getUserId = async () => {
+        const id = await AsyncStorage.getItem("userId"); // Replace with the actual user ID
+        // Set the external id of the user
+        OneSignal.login(id);
+      };
+  
+      // Set the log level
+      OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE);
+      // Initialize OneSignal with your OneSignal app ID
+      OneSignal.init(Constants.manifest.extra.oneSignalAppId);
+      // Request notification permissions
+      OneSignal.promptForPushNotificationsWithUserResponse(response => {
+        console.log("Prompt response:", response);
+      });
+  
+      getUserId();
       checkToken();
     }, [])
-  )
+  );
   
   const checkToken = async () => {
     const token = await AsyncStorage.getItem("userId");
