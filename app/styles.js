@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-export const theme="#73150F";
+export const theme="#de390b";
 
 export const commonStyles = StyleSheet.create({
   container: {
@@ -20,7 +20,7 @@ export const commonStyles = StyleSheet.create({
     marginBottom: 20,
   },
   button:{
-    backgroundColor: '#73150F',
+    backgroundColor: '#de390b',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
