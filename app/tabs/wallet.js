@@ -20,6 +20,7 @@ const WalletScreen = () => {
   const [sellGrams, setSellGrams] = useState("");
   const [sellAmount, setSellAmount] = useState("");
   const [rate, setRate] = React.useState(0);
+  const [sellRate, setSellRate] = React.useState(0);
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
   const navigation = useNavigation();
@@ -43,6 +44,7 @@ const WalletScreen = () => {
       .then((res) => {
         console.log(res.data[0].goldrate);
         setRate(res.data[0].goldrate);
+        setSellRate(res.data[0].sellingRate);
       })
       .catch((err) => {
         console.log(err);
@@ -69,7 +71,7 @@ const WalletScreen = () => {
         }
         if (res.data.grams) {
           const newGrams = parseFloat(res.data.grams);
-          setGrams(newGrams.toFixed(2));
+          setGrams(newGrams.toFixed(4));
           setLoading(false);
         } else {
           setGrams(0);
@@ -95,13 +97,13 @@ const WalletScreen = () => {
 
   const handleSellGrams = (text) => {
     setSellGrams(text);
-    const convertedAmount = text ? parseFloat(text) * rate : 0; // Set to 0 if empty
+    const convertedAmount = text ? parseFloat(text) * sellRate : 0; // Set to 0 if empty
     setSellAmount(convertedAmount.toFixed(2));
   };
 
   const handleSellAmount = (text) => {
     setSellAmount(text);
-    const convertedAmount = text ? parseFloat(text) / rate : 0; // Set to 0 if empty
+    const convertedAmount = text ? parseFloat(text) / sellRate : 0; // Set to 0 if empty
     setSellGrams(convertedAmount.toFixed(2));
   };
 
@@ -348,6 +350,7 @@ const WalletScreen = () => {
               autoCorrect={false}
               autoComplete="off"
               spellCheck={false}
+              editable={false}
             />
           </View>
           <Button
