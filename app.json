@@ -7,22 +7,22 @@
       "favicon": "./app/assets/big_logo.png"
     },
     "plugins": [
+      [
+        "onesignal-expo-plugin",
+        {
+          "mode": "development"
+        }
+      ],
       "expo-router",
       [
         "expo-image-picker",
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
-      ],
-      [
-        "onesignal-expo-plugin",
-        {
-          "mode": "development"
-        }
       ]
     ],
     "name": "Agrawal Jewels",
-    "slug": "Agrawal Jewels",
+    "slug": "agarwal-jewels-app",
     "extra": {
       "router": {
         "origin": false
