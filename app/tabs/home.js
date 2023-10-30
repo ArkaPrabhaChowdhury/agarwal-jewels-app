@@ -149,7 +149,7 @@ const HomeScreen = () => {
       <View flex-1 center paddingT-42>
         <View paddingB-24 paddingH-12>
           <Text text50 center>
-            Buy gold at the best market rate, with ease and trust.
+            Available Balance
           </Text>
         </View>
         {status ? (
