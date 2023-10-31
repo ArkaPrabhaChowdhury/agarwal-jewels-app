@@ -60,13 +60,11 @@ const DashboardPage = () => {
       };
   
       // Set the log level
-      OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE);
+      OneSignal.Debug.setLogLevel(LogLevel.Verbose);
       // Initialize OneSignal with your OneSignal app ID
-      OneSignal.init(Constants.manifest.extra.oneSignalAppId);
+      OneSignal.initialize(Constants.expoConfig.extra.oneSignalAppId);
       // Request notification permissions
-      OneSignal.promptForPushNotificationsWithUserResponse(response => {
-        console.log("Prompt response:", response);
-      });
+      OneSignal.Notifications.requestPermission(true);
   
       getUserId();
       checkToken();
