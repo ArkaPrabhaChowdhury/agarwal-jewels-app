@@ -94,7 +94,7 @@ const DashboardPage = () => {
         <TouchableOpacity onPress={openWhatsapp}>
           <Image
             style={styles.supportIcon}
-            source={require("./assets/support.png")}
+            source={require("./assets/support_new.png")}
           />
         </TouchableOpacity>
       </View>
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     }),
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "#73150F",
+    backgroundColor: "#de390b",
     paddingTop: Platform.select({
       web:10,
       default:40
