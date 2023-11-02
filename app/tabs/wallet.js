@@ -338,6 +338,7 @@ const WalletScreen = () => {
                 borderRadius: 5,
                 backgroundColor: "#f1f1f1",
                 paddingLeft: 12,
+                color: "black",
               }}
               placeholder="Amount"
               inputMode="numeric"
@@ -347,7 +348,7 @@ const WalletScreen = () => {
               autoCorrect={false}
               autoComplete="off"
               spellCheck={false}
-              editable={false}
+              editable={false}           
             />
           </View>
           <Button

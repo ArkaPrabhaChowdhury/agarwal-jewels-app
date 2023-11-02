@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { Link, SplashScreen, useNavigation } from "expo-router";
-import { commonStyles } from "./styles";
+import { commonStyles, theme } from "./styles";
 import { ScrollView } from "react-native";
 import axios from "axios";
 import { apiURL } from "../utils";
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f1f1f1",
   },
   register: {
-    color: "#73150F",
+    color: theme,
     fontWeight: "bold",
   },
 });

@@ -271,7 +271,7 @@ const HomeScreen = () => {
             )}
             <View flex center>
               <Image
-                source={require("../assets/gold.png")}
+                source={require("../assets/gold_coin.png")}
                 style={{ width: 40, height: 40 }}
               />
             </View>
