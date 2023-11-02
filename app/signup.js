@@ -11,7 +11,7 @@ import {
 } from "react-native";
 
 import { Link, useNavigation } from "expo-router";
-import { commonStyles } from "./styles";
+import { commonStyles, theme } from "./styles";
 import Toast from "react-native-toast-message";  
 import axios from "axios";
 import { apiURL } from "../utils";
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#73150F",
+    backgroundColor: theme,
     borderRadius: 5,
   },
   buttonText: {
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   login: {
-    color: "#73150F",
+    color: theme,
     fontSize: 16,
     fontWeight: "bold",
   },
