@@ -139,12 +139,11 @@ const HomeScreen = () => {
     paddingLeft: 12,
     // Add other styles that are common across all platforms here
   };
-  
+
   // Conditionally add the outline style for web
-  if (Platform.OS === 'web') {
-    inputStyle.outline = 'none';
+  if (Platform.OS === "web") {
+    inputStyle.outline = "none";
   }
-  
 
   // const handlePurchase = async () => {
   //   if (buyAmount == "" || buyGrams == "" || buyAmount == 0 || buyGrams == 0) {
@@ -200,19 +199,23 @@ const HomeScreen = () => {
   };
 
   const handleYoutube = () => {
-    Linking.openURL("https://youtube.com/@agrawaljewellersvidisha3049?si=8l-XPsrlwY5l3Nbk");
-  }
+    Linking.openURL(
+      "https://youtube.com/@agrawaljewellersvidisha3049?si=8l-XPsrlwY5l3Nbk"
+    );
+  };
 
   return (
     <KeyboardAwareScrollView center paddingT-12>
-      <View backgroundColor={theme} paddingB-12 style={
-        {
-          paddingBottom:Platform.select({
-            web:25,
-            default:12
-          })
-        }
-      }>
+      <View
+        backgroundColor={theme}
+        paddingB-12
+        style={{
+          paddingBottom: Platform.select({
+            web: 25,
+            default: 12,
+          }),
+        }}
+      >
         <View paddingB-12 paddingH-12>
           <Text style={styles.heading} center>
             Available Balance
@@ -221,7 +224,11 @@ const HomeScreen = () => {
 
         <View flex row center>
           <View marginR-24>
-            <Text style={styles.balance}>{grams} gm</Text>
+            {loading ? (
+              <Loading />
+            ) : (
+              <Text style={styles.balance} center>{balance} gm</Text>
+            )}
             <Text center color="white">
               Gold
             </Text>
@@ -243,9 +250,9 @@ const HomeScreen = () => {
         <View center>
           <View
             style={{
-              height:Platform.select({
-                default:0.2,
-                web:0
+              height: Platform.select({
+                default: 0.2,
+                web: 0,
               }), // or 2 if you want a thicker line
               width: "80%", // or a specific width if you want the line to be shorter
               backgroundColor: "white", // or any color you prefer
@@ -255,8 +262,7 @@ const HomeScreen = () => {
           />
         </View>
 
-
-        <View >
+        <View>
           <Text style={styles.heading} center>
             Rates
           </Text>
@@ -383,7 +389,6 @@ const HomeScreen = () => {
               marginBottom: 20,
               borderRadius: 5,
               backgroundColor: "#f1f1f1",
-              
             }}
           >
             <FontAwesome5
@@ -402,7 +407,6 @@ const HomeScreen = () => {
               autoCorrect={false}
               autoComplete="off"
               spellCheck={false}
-              
             />
           </View>
 
@@ -442,9 +446,9 @@ const HomeScreen = () => {
             />
           </View>
         </View>
-            <TouchableOpacity onPress={handleYoutube}>
-            <Text underline >See how it works</Text>
-            </TouchableOpacity>
+        <TouchableOpacity onPress={handleYoutube}>
+          <Text underline>See how it works</Text>
+        </TouchableOpacity>
         <Button
           label="Buy Now"
           backgroundColor={theme}
@@ -481,11 +485,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 24,
-    paddingHorizontal:
-    Platform.select({
-      web:20,
-      default:0
-    })
+    paddingHorizontal: Platform.select({
+      web: 20,
+      default: 0,
+    }),
   },
   activeButton: {
     backgroundColor: theme, // set the background color to the theme color

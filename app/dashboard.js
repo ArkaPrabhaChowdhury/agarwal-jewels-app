@@ -1,11 +1,15 @@
 import React, { useEffect } from "react";
-import { StyleSheet, SafeAreaView, Platform } from "react-native";
+import {
+  StyleSheet,
+  SafeAreaView,
+  Platform
+} from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Dimensions, TouchableOpacity } from "react-native";
 import HomeScreen from "./tabs/home";
 import { Ionicons, AntDesign, FontAwesome } from "@expo/vector-icons";
 import { theme } from "./styles";
-import { useFocusEffect } from "expo-router/src/useFocusEffect";
+import { useFocusEffect } from "expo-router";
 import { BackHandler } from "react-native";
 import { Alert } from "react-native";
 import Profile from "./tabs/profile";
@@ -19,8 +23,8 @@ import { View } from "react-native-ui-lib";
 import HistoryScreen from "./tabs/history";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
- import { LogLevel, OneSignal } from 'react-native-onesignal';
- import Constants from "expo-constants";
+import { LogLevel, OneSignal } from "react-native-onesignal";
+import Constants from "expo-constants";
 
 const Tab = createBottomTabNavigator();
 const DashboardPage = () => {
@@ -50,46 +54,55 @@ const DashboardPage = () => {
     }, [])
   );
 
-  
+  useEffect(() => {
+    const initializeOneSignal = async () => {
+      const hasInitialized = await AsyncStorage.getItem('hasInitializedOneSignal');
+
+      if (hasInitialized === null) {
+        // Your initialization code
+        const getUserId = async () => {
+          const id = await AsyncStorage.getItem("userId");
+          OneSignal.login(id);
+        };
+
+        OneSignal.Debug.setLogLevel(LogLevel.Verbose);
+        OneSignal.initialize(Constants.expoConfig.extra.oneSignalAppId);
+        OneSignal.Notifications.requestPermission(true);
+        getUserId();
+
+        // After initialization, set the flag so this doesn't run again
+        await AsyncStorage.setItem('hasInitializedOneSignal', 'true');
+      }
+    };
+
+    initializeOneSignal();
+  }, []);
+
   useFocusEffect(
     React.useCallback(() => {
-      const getUserId = async () => {
-        const id = await AsyncStorage.getItem("userId"); // Replace with the actual user ID
-        // Set the external id of the user
-        OneSignal.login(id);
-      };
-  
-      // Set the log level
-      OneSignal.Debug.setLogLevel(LogLevel.Verbose);
-      // Initialize OneSignal with your OneSignal app ID
-      OneSignal.initialize(Constants.expoConfig.extra.oneSignalAppId);
-      // Request notification permissions
-      OneSignal.Notifications.requestPermission(true);
-  
-      getUserId();
       checkToken();
     }, [])
-  );
-  
+  )
+
   const checkToken = async () => {
     const token = await AsyncStorage.getItem("userId");
     if (!token) {
       navigation.navigate("login");
     }
-  }
+  };
   const navigation = useNavigation();
 
   const openWhatsapp = () => {
     Linking.openURL(
       "https://wa.me/919827248783?text=Hi%2C%20I%20have%20a%20query%20regarding%20the%20app."
     );
-  }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light" />
       <View style={styles.navbar}>
-        <Image source={require("./assets/logo.png")} style={styles.logo}/>
+        <Image source={require("./assets/logo.png")} style={styles.logo} />
 
         <TouchableOpacity onPress={openWhatsapp}>
           <Image
@@ -195,15 +208,15 @@ const styles = StyleSheet.create({
   },
   navbar: {
     height: Platform.select({
-      web:75,
-      default:90
+      web: 75,
+      default: 90,
     }),
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: "#de390b",
     paddingTop: Platform.select({
-      web:10,
-      default:40
+      web: 10,
+      default: 40,
     }),
     paddingBottom: 15,
     paddingHorizontal: 20,
@@ -223,11 +236,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
   },
-  logo:{
+  logo: {
     width: 50,
     height: 50,
   },
-  supportIcon:{
+  supportIcon: {
     width: 35,
     height: 35,
   },

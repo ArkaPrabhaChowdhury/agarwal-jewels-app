@@ -63,6 +63,7 @@ const RegisterPage = () => {
         Toast.show({
           type: 'success',
           text1: 'Account created successfully!',
+          onHide: () => navigation.navigate("login"),
         });
       })
       .catch((error) => {
@@ -74,8 +75,9 @@ const RegisterPage = () => {
           });
         
       }
-      else if(error.response.data.message === "User already exists"){
+      else if(error.response.data.message === "Phone number is already in use"){
         console.log(error.response.data);
+        console.log("Number exists error")
         Toast.show({
           type: 'error',
           text1: error.response.data.message,
