@@ -4,7 +4,7 @@ import { View, Text, StyleSheet } from "react-native";
 
 const PrivacyPolicy = () => {
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView contentContainerStyle ={styles.container}>
       <Text style={styles.heading}>Privacy Policy</Text>
       <Text style={styles.subheading}>
         This Privacy Policy of Agrawal Jewellers and the User is effective as on
@@ -497,8 +497,9 @@ const PrivacyPolicy = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 40
+
+    padding: 40,
+    paddingBottom: 20,
   },
   heading: {
     fontSize: 24,

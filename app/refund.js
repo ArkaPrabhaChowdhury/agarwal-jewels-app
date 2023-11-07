@@ -5,7 +5,7 @@ import { View, Text } from 'react-native';
 const RefundPage = () => {
   return (
     <View style={{
-        padding:24
+        padding:42
     }}>
       <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Returns & Refund</Text>
       <Text style={{ marginTop: 10 }}>1. Refunds in case of failed orders:</Text>

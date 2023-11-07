@@ -1,9 +1,5 @@
-import React, { useEffect } from "react";
-import {
-  StyleSheet,
-  SafeAreaView,
-  Platform
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, SafeAreaView, Platform,Modal,FlatList } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Dimensions, TouchableOpacity } from "react-native";
 import HomeScreen from "./tabs/home";
@@ -22,14 +18,15 @@ import { Image } from "expo-image";
 import { View } from "react-native-ui-lib";
 import HistoryScreen from "./tabs/history";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import { LogLevel, OneSignal } from "react-native-onesignal";
 import Constants from "expo-constants";
+import { Text } from "react-native";
 
 const Tab = createBottomTabNavigator();
 const DashboardPage = () => {
+  const [isMenuVisible, setMenuVisible] = useState(false);
   const windowHeight = Dimensions.get("window").height;
-
+  const navigation = useNavigation();
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
@@ -54,35 +51,39 @@ const DashboardPage = () => {
     }, [])
   );
 
-  useEffect(() => {
-    const initializeOneSignal = async () => {
-      const hasInitialized = await AsyncStorage.getItem('hasInitializedOneSignal');
+  if ((Platform.OS === "android" || Platform.OS === "ios") && Constants.appOwnership !== 'expo') {
+    useEffect(() => {
+      const initializeOneSignal = async () => {
+        const hasInitialized = await AsyncStorage.getItem(
+          "hasInitializedOneSignal"
+        );
 
-      if (hasInitialized === null) {
-        // Your initialization code
-        const getUserId = async () => {
-          const id = await AsyncStorage.getItem("userId");
-          OneSignal.login(id);
-        };
+        if (hasInitialized === null) {
+          // Your initialization code
+          const getUserId = async () => {
+            const id = await AsyncStorage.getItem("userId");
+            OneSignal.login(id);
+          };
 
-        OneSignal.Debug.setLogLevel(LogLevel.Verbose);
-        OneSignal.initialize(Constants.expoConfig.extra.oneSignalAppId);
-        OneSignal.Notifications.requestPermission(true);
-        getUserId();
+          OneSignal.Debug.setLogLevel(LogLevel.Verbose);
+          OneSignal.initialize(Constants.expoConfig.extra.oneSignalAppId);
+          OneSignal.Notifications.requestPermission(true);
+          getUserId();
 
-        // After initialization, set the flag so this doesn't run again
-        await AsyncStorage.setItem('hasInitializedOneSignal', 'true');
-      }
-    };
+          // After initialization, set the flag so this doesn't run again
+          await AsyncStorage.setItem("hasInitializedOneSignal", "true");
+        }
+      };
 
-    initializeOneSignal();
-  }, []);
+      initializeOneSignal();
+    }, []);
+  }
 
   useFocusEffect(
     React.useCallback(() => {
       checkToken();
     }, [])
-  )
+  );
 
   const checkToken = async () => {
     const token = await AsyncStorage.getItem("userId");
@@ -90,7 +91,6 @@ const DashboardPage = () => {
       navigation.navigate("login");
     }
   };
-  const navigation = useNavigation();
 
   const openWhatsapp = () => {
     Linking.openURL(
@@ -98,10 +98,54 @@ const DashboardPage = () => {
     );
   };
 
+  const toggleMenu = () => {
+    setMenuVisible(!isMenuVisible);
+  };
+
+  const handleMenuItemClick = (item) => {
+    if (item.id === 1) {
+      navigation.navigate("faq");
+    } else if (item.id === 2) {
+      navigation.navigate("refund");
+    } else if (item.id === 3) {
+      navigation.navigate("terms");
+    }
+    else if (item.id === 4) {
+      navigation.navigate("privacy");
+    }
+    else if (item.id === 5) {
+      navigation.navigate("contact");
+    }
+    else if (item.id === 6) {
+      AsyncStorage.removeItem("userId");
+      navigation.navigate("login");
+    }
+    toggleMenu();
+  }
+
+  const menuItems = [
+    { id: 1, title: 'FAQs' },
+    { id: 2, title: 'Refund Policy' },
+    { id: 3, title: 'Terms and Conditions' },
+    { id: 4, title: 'Privacy Policy'},
+    { id: 5, title: 'Contact Us'},
+    { id: 6, title: 'Logout'},
+    // Add more menu items as needed
+  ];
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light" />
+
       <View style={styles.navbar}>
+      <TouchableOpacity onPress={toggleMenu}>
+        {isMenuVisible ? (
+          <AntDesign name="close" size={28} color="white" />
+        ) : (
+          <Ionicons name="ios-menu" size={28} color="white" />
+        )}
+      </TouchableOpacity>
+
         <Image source={require("./assets/logo.png")} style={styles.logo} />
 
         <TouchableOpacity onPress={openWhatsapp}>
@@ -110,7 +154,18 @@ const DashboardPage = () => {
             source={require("./assets/support_new.png")}
           />
         </TouchableOpacity>
+
+        {isMenuVisible && (
+        <View style={styles.menu}>
+          {menuItems.map((item) => (
+            <TouchableOpacity key={item.id} onPress={() => handleMenuItemClick(item)}>
+              <Text style={styles.menuItem}>{item.title}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
       </View>
+
       <Tab.Navigator
         screenOptions={{
           tabBarStyle: { height: windowHeight * 0.08, paddingBottom: 6 },
@@ -211,6 +266,7 @@ const styles = StyleSheet.create({
       web: 75,
       default: 90,
     }),
+    zIndex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: "#de390b",
@@ -221,14 +277,7 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     paddingHorizontal: 20,
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 3,
+
   },
   container: {
     flex: 1,
@@ -252,6 +301,43 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 18,
     marginBottom: 20,
+  },
+  menu: {
+    position: 'absolute',
+    top: Platform.select(
+      {
+        web:50,
+        android: 75,
+      }
+    ),
+    left: Platform.select(
+      {
+        web:40,
+        android: 30,
+      }
+    ),
+    backgroundColor: 'white',
+    borderRadius: 5,
+    padding: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.5, // Increase shadow opacity for better visibility
+    shadowRadius: 5, // Increase shadow radius for better visibility
+    elevation: 5, // Increase elevation for better visibility
+    zIndex: 2, // Ensure the popup appears above other elements
+  },
+  menuItem: {
+    fontSize: 18,
+    marginVertical: 5,
+    color: 'black', // Set text color to black for better visibility
+  },
+  closeButton: {
+    fontSize: 18,
+    color: 'blue', // Change to your desired color
+    marginTop: 10,
   },
 });
 
