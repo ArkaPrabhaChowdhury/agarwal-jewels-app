@@ -233,7 +233,7 @@ const HomeScreen = () => {
               Gold
             </Text>
             <Text center color="white">
-              24k-999.0
+              24k-995.0
             </Text>
           </View>
           <View>
@@ -242,7 +242,7 @@ const HomeScreen = () => {
               Silver
             </Text>
             <Text center color="white">
-              24k-999.0
+              24k-995.0
             </Text>
           </View>
         </View>
