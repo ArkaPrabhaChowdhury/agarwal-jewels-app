@@ -294,7 +294,7 @@ const HomeScreen = () => {
             <View flex center>
               <Image
                 source={require("../assets/silver.png")}
-                style={{ width: 45, height: 45 }}
+                style={{ width: 40, height: 40}}
               />
             </View>
             <Text center color="white">
