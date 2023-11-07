@@ -38,7 +38,7 @@ const NotificationsScreen = () => {
     >
       <ScrollView>
         {data ? (
-          data.map((item, index) => (
+          data.slice().reverse().map((item, index) => (
             <Card
               key={index}
               style={{
