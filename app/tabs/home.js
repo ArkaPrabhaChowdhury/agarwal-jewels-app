@@ -225,7 +225,7 @@ const HomeScreen = () => {
         <View flex row center>
           <View marginR-24>
             {loading ? (
-              <Loading />
+              <Loading color={"white"}/>
             ) : (
               <Text style={styles.balance} center>{balance} gm</Text>
             )}
