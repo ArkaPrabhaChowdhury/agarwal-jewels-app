@@ -95,7 +95,7 @@ const Contact = () => {
         Is GST and Making Charges applicable on my Purchases?
       </Text>
       <Text marginB-10>
-        No, Current Purchase is consider as an advance against your final
+        Yes, Current Purchase is consider as an advance against your final
         product Purchase, Hence GST and Making Charges will be levied on the
         final Product and not on current advance.
       </Text>
