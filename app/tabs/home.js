@@ -8,7 +8,7 @@ import {
 } from "react-native-ui-lib";
 import Text from "react-native-ui-lib/text";
 import { commonStyles, theme } from "../styles";
-import { Platform, StyleSheet, TextInput } from "react-native";
+import { Platform, StyleSheet, TextInput,NativeModules,NativeEventEmitter } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useState, useEffect, useRef } from "react";
 import { apiURL } from "../../utils";
@@ -18,6 +18,7 @@ import * as Linking from "expo-linking";
 import Loading from "./loading";
 import Toast from "react-native-toast-message";
 import { Image } from "expo-image";
+import EasebuzzCheckout from "react-native-easebuzz-kit";
 
 const HomeScreen = () => {
   const [rate, setRate] = useState("0000");
@@ -63,6 +64,18 @@ const HomeScreen = () => {
     }
   };
 
+  const getAccessKey = async () => {
+    axios
+    .post(`${apiURL}/payment/initiate`)
+    .then((res) => {
+      console.log(res.data.data);
+      callPaymentGateway(res.data.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+
   const handleBuyGrams = (text) => {
     setBuyGrams(text);
     const convertedAmount = text ? parseFloat(text) * rate : 0; // Set to 0 if empty
@@ -79,6 +92,24 @@ const HomeScreen = () => {
     const id = await AsyncStorage.getItem("userId");
     setClientId(id);
     console.log(id);
+  };
+
+  const callPaymentGateway = (key) => {
+    var options = {
+      access_key: key,
+      pay_mode: "test",
+    }
+    EasebuzzCheckout.open(options)
+      .then((data) => {
+        //handle the payment success & failed response here
+        console.log("Payment Response:");
+        console.log(data);
+      })
+      .catch((error) => {
+        //handle sdk failure issue here
+        console.log("SDK Error:");
+        console.log(error);
+      });
   };
 
   const fetchWallet = async () => {
@@ -225,9 +256,11 @@ const HomeScreen = () => {
         <View flex row center>
           <View marginR-24>
             {loading ? (
-              <Loading color={"white"}/>
+              <Loading color={"white"} />
             ) : (
-              <Text style={styles.balance} center>{balance} gm</Text>
+              <Text style={styles.balance} center>
+                {balance} gm
+              </Text>
             )}
             <Text center color="white">
               Gold
@@ -294,7 +327,7 @@ const HomeScreen = () => {
             <View flex center>
               <Image
                 source={require("../assets/silver.png")}
-                style={{ width: 40, height: 40}}
+                style={{ width: 40, height: 40 }}
               />
             </View>
             <Text center color="white">
@@ -454,6 +487,12 @@ const HomeScreen = () => {
           backgroundColor={theme}
           marginT-24
           onPress={handlePurchase}
+        />
+        <Button
+          label="Easebuzz"
+          backgroundColor={theme}
+          marginT-24
+          onPress={getAccessKey}
         />
       </Card>
       <Toast />
