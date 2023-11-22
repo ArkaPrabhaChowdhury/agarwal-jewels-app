@@ -19,6 +19,7 @@ import Loading from "./loading";
 import Toast from "react-native-toast-message";
 import { Image } from "expo-image";
 import EasebuzzCheckout from "react-native-easebuzz-kit";
+import { v4 as uuidv4 } from 'uuid';
 
 const HomeScreen = () => {
   const [rate, setRate] = useState("0000");
@@ -65,8 +66,16 @@ const HomeScreen = () => {
   };
 
   const getAccessKey = async () => {
+    const id = await AsyncStorage.getItem("userId");
+    const info = axios.get(`${apiURL}/users/${id}`);
+    const args = {
+      txnid: uuidv4(),
+      amount: buyAmount,
+      firstName: info.data.email,
+      phone: info.data.phonenumber,
+    };
     axios
-    .post(`${apiURL}/payment/initiate`)
+    .post(`${apiURL}/payment/initiate`, args)
     .then((res) => {
       console.log(res.data.data);
       callPaymentGateway(res.data.data);
