@@ -43,7 +43,7 @@ const HomeScreen = () => {
     ios: "agarwaljewelsapp://dashboard",
     android: "agarwaljewelsapp//:dashboard",
     default: "agarwaljewelsapp//:dashboard",
-    web: "https://agarwal-jewellers.vercel.app/dashboard",
+    web: "https://www.agrawaljewels.com/dashboard",
   });
 
   const generateFixedLengthTransactionId = (length) => {
@@ -92,6 +92,7 @@ const HomeScreen = () => {
       amount: buyAmount,
       firstName: info.data.email,
       phone: info.data.phonenumber,
+      url:redirectUrl,
     };
     axios
       .post(`${apiURL}/payment/initiate`, args)
