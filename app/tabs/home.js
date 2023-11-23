@@ -8,7 +8,13 @@ import {
 } from "react-native-ui-lib";
 import Text from "react-native-ui-lib/text";
 import { commonStyles, theme } from "../styles";
-import { Platform, StyleSheet, TextInput,NativeModules,NativeEventEmitter } from "react-native";
+import {
+  Platform,
+  StyleSheet,
+  TextInput,
+  NativeModules,
+  NativeEventEmitter,
+} from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useState, useEffect, useRef } from "react";
 import { apiURL } from "../../utils";
@@ -19,7 +25,7 @@ import Loading from "./loading";
 import Toast from "react-native-toast-message";
 import { Image } from "expo-image";
 import EasebuzzCheckout from "react-native-easebuzz-kit";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 const HomeScreen = () => {
   const [rate, setRate] = useState("0000");
@@ -39,6 +45,19 @@ const HomeScreen = () => {
     default: "agarwaljewelsapp//:dashboard",
     web: "https://agarwal-jewellers.vercel.app/dashboard",
   });
+
+  const generateFixedLengthTransactionId = (length) => {
+    const characters =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+    let transactionId = "";
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      transactionId += characters.charAt(randomIndex);
+    }
+
+    return transactionId;
+  };
 
   useEffect(() => {
     getRate();
@@ -67,23 +86,29 @@ const HomeScreen = () => {
 
   const getAccessKey = async () => {
     const id = await AsyncStorage.getItem("userId");
-    const info = axios.get(`${apiURL}/users/${id}`);
+    const info = await axios.get(`${apiURL}/users/${id}`);
     const args = {
-      txnid: uuidv4(),
+      txnid: generateFixedLengthTransactionId(24),
       amount: buyAmount,
       firstName: info.data.email,
       phone: info.data.phonenumber,
     };
     axios
-    .post(`${apiURL}/payment/initiate`, args)
-    .then((res) => {
-      console.log(res.data.data);
-      callPaymentGateway(res.data.data);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-  }
+      .post(`${apiURL}/payment/initiate`, args)
+      .then((res) => {
+        console.log(res.data.data);
+        if (Platform.OS === "android") {
+          callPaymentGateway(res.data.data);
+        } else {
+          Linking.openURL(
+            "https://testpay.easebuzz.in/v2/pay/" + res.data.data
+          );
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const handleBuyGrams = (text) => {
     setBuyGrams(text);
@@ -107,7 +132,7 @@ const HomeScreen = () => {
     var options = {
       access_key: key,
       pay_mode: "test",
-    }
+    };
     EasebuzzCheckout.open(options)
       .then((data) => {
         //handle the payment success & failed response here
