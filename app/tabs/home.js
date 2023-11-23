@@ -43,7 +43,7 @@ const HomeScreen = () => {
     ios: "agarwaljewelsapp://dashboard",
     android: "agarwaljewelsapp//:dashboard",
     default: "agarwaljewelsapp//:dashboard",
-    web: "https://www.agrawaljewels.com/dashboard",
+    web: "https://www.agrawaljewels.com",
   });
 
   const generateFixedLengthTransactionId = (length) => {
