@@ -40,10 +40,10 @@ const HomeScreen = () => {
   const toastRef = useRef(null);
 
   const redirectUrl = Platform.select({
-    ios: "agarwaljewelsapp://dashboard",
-    android: "agarwaljewelsapp//:dashboard",
-    default: "agarwaljewelsapp//:dashboard",
-    web: "https://www.agrawaljewels.com",
+    ios: "https://www.agrawaljewels.com/redirect",
+    android: "https://www.agrawaljewels.com/redirect",
+    default: "https://www.agrawaljewels.com/redirect",
+    web: "https://shorturl.at/cpqD7",
   });
 
   const generateFixedLengthTransactionId = (length) => {
