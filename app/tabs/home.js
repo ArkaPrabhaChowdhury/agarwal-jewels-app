@@ -152,8 +152,8 @@ const HomeScreen = () => {
       .get(`${apiURL}/users/${id}`)
       .then((res) => {
         if (res.data.wallet) {
-          const newBal = parseFloat(res.data.wallet);
-          setBalance(newBal.toFixed(2));
+          const newBal = parseFloat(res.data.grams);
+          setBalance(newBal.toFixed(4));
         } else {
           setBalance(0);
           setLoading(false);
